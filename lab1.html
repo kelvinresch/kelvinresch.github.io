@@ -45,37 +45,53 @@
                 <div class="card bg-light border-0">
                     <div class="card-body p-4 p-lg-5">
                         <!-- Card Content -->
-                        <h1 class="card-title text-center mb-4">Welcome to My Feature Section</h1>
+                        <h1 class="card-title text-center mb-4">Lab 1A</h1>
                         <p class="card-text">
-                            This card is designed to showcase information in a structured way. You can use it to display text, headers, videos, and images, all in a single unified layout.
+                            The purpose of this first week was to get familiar with the Artemis Nano microcontroller. We experimented with blinking, serial communication, printing, analog reading, and the onboard microphone.
                         </p>
-                        <h2 class="fs-4 fw-bold mt-4">Subheading 1</h2>
+                        <!-- Section 1: Blink-->
+                        <h2 class="fs-4 fw-bold mt-4">Blink</h2>
                         <p class="card-text">
-                            Here's some detailed text about this section. You can add as much or as little content as you need.
+                            An LED is connected to GPIO pin 19 on the Artemis microcontroller. By pulling this pin high and low and sleeping in between, the pin will blink.
                         </p>
                         <!-- Embedded Video -->
                         <div class="ratio ratio-16x9 mb-4">
-                            <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="YouTube video" allowfullscreen></iframe>
+                            <iframe src="https://youtube.com/shorts/PMNKNEziqdA?feature=share" title="YouTube video" allowfullscreen></iframe>
                         </div>
-                        <h2 class="fs-4 fw-bold mt-4">Subheading 2</h2>
+                        <!-- Section 2: Serial communication and printing-->
+                        <h2 class="fs-4 fw-bold mt-4">Serial communication and printing</h2>
                         <p class="card-text">
-                            Add another block of content here. You can include additional details, links, or any other relevant information.
+                            After sending code to the microcontroller, the PC can communicate with the microcontroller. We can make the microcontroller "echo" things written to the PC. We do this by programming the microcontroller to print any text it receives from the PC to the serial output. Then, this text can be read from the PC.
                         </p>
-                        <!-- Embedded Image -->
-                        <div class="text-center mb-4">
-                            <img src="https://via.placeholder.com/800x400" alt="Placeholder Image" class="img-fluid rounded">
+                        <!-- Embedded Video -->
+                        <div class="ratio ratio-16x9 mb-4">
+                            <iframe src="https://youtu.be/ZGa1I_31-i4" title="YouTube video" allowfullscreen></iframe>
                         </div>
-                        <h3 class="fs-5 fw-bold mt-4">Closing Thoughts</h3>
+                        <!-- Section 3: Analog Read-->
+                        <h2 class="fs-4 fw-bold mt-4">Analog Read</h2>
                         <p class="card-text">
-                            This card layout gives you the flexibility to add multimedia elements while maintaining a clean and organized design.
+                            In addition to digital IO, the microcontroller also has analog input channels. These analog input channels are connected to 14-bit ADCs. I think they realistically have around 8.5 bits of precision though. We read multiple analog input channels and printed them to the console. One of the channels measured die temperature, and you can see that when I hold the chip with my thumb, the temperature number increases and when I blow on the chip, the temperature decreases.
                         </p>
+                        <!-- Embedded Video -->
+                        <div class="ratio ratio-16x9 mb-4">
+                            <iframe src="https://youtu.be/k3QEA90rxQw" title="YouTube video" allowfullscreen></iframe>
+                        </div>
+                        <!-- Section 4: Microphone-->
+                        <h2 class="fs-4 fw-bold mt-4">Microphone</h2>
+                        <p class="card-text">
+                            The Artemis also has a microphone on the PCB. We can take the time-series data from this microphone and then do a discrete fourier transform on it. We then take the largest amplitude from the frequency domain and print that frequency. If I whistle different tones, the microcontroller will print out a higher or lower number.
+                        </p>
+                        <!-- Embedded Video -->
+                        <div class="ratio ratio-16x9 mb-4">
+                            <iframe src="https://youtu.be/JrX5kW6bG74" title="YouTube video" allowfullscreen></iframe>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
         <!-- Footer-->
         <footer class="py-5 bg-dark">
-            <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Your Website 2023</p></div>
+            <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Kelvin Resch 2024</p></div>
         </footer>
         <!-- Bootstrap core JS-->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
