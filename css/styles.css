@@ -92,7 +92,7 @@
 }
 
 body {
-  background: linear-gradient(to bottom, #766d7c, #4f4554); /* Gradient background */
+  background: linear-gradient(to bottom, #bab0c0, #4f4554); /* Gradient background */
   margin: 0;
   font-family: var(--bs-body-font-family);
   font-size: var(--bs-body-font-size);
