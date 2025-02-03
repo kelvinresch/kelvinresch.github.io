@@ -186,6 +186,26 @@
                         <div class="text-center mb-4">
                             <img src="assets/Lab1/Task 5.2.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
                         </div>
+                        <!-- Section 6: SEND_TIME_DATA -->
+                        <h2 class="fs-4 fw-bold mt-4">SEND_TIME_DATA</h2>
+                        <p class="card-text">
+                            This one was a little more complicated. I made an array called "values" that was originally 100 long, 
+                            but through debugging I found out that I was hitting MAX_MSG_SIZE definied in EString.h. So, I reduced 
+                            the size of my values array to 25 and increased MAX_MSG_SIZE to 255 (Sorry if that wasn't allowed). 
+                            I also changed my datatype from float to int so that I could fit more data. I used sizeof() 
+                            to find that the size of an int and a float on the Artemis is 4 bytes, so you would think the message
+                            size would stay the same. However, the float has two trailing zeroes ".00" on the end of each number,
+                            and the size of the payload is determined by how many characters there are. So getting rid of these extra
+                            trailing zeros gives me more space to work with.
+                        </p>
+                        <p class="card-text">
+                            I made one command called UPDATE_TIME_DATA that fills the array with time data, and another command
+                            called SEND_TIME_DATA that moves the contents of the array into tx_characteristic_string. 
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab1/Task 6.1.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
                     </div>
                 </div>
             </div>
