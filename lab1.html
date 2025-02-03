@@ -127,14 +127,24 @@
                         <div class="text-center mb-4">
                             <img src="assets/Lab1/Task 1.3.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
                         </div>
-                        <!-- Section 2: Serial communication and printing-->
-                        <h2 class="fs-4 fw-bold mt-4">Serial communication and printing</h2>
+                        <!-- Section 2: Send 3 floats-->
+                        <h2 class="fs-4 fw-bold mt-4">SEND 3 FLOATS</h2>
                         <p class="card-text">
-                            After sending code to the microcontroller, the PC can communicate with the microcontroller. We can make the microcontroller "echo" things written to the PC. We do this by programming the microcontroller to print any text it receives from the PC to the serial output. Then, this text can be read from the PC.
+                            robot_cmd.get_next_value() also works with float datatypes. The ble library uses the "|" character to parse the floats so that I can pass multiple values in one commanding message.
                         </p>
-                        <!-- Embedded Video -->
-                        <div class="ratio ratio-16x9 mb-4">
-                            <iframe src="https://youtube.com/embed/ZGa1I_31-i4" title="YouTube video" allowfullscreen></iframe>
+                        <!-- Embedded Image -->
+                        <p class="card-text">
+                            After sending the floats 1.0, 2.0, and 3.0, we should expect to see that they should up in the serial monitor on the Arduino IDE.
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab1/Task 2.1.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <!-- Embedded Image -->
+                        <p class="card-text">
+                            Seeing these values show up in the serial monitor confirms that the code works.
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab1/Task 2.2.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
                         </div>
                         <!-- Section 3: Analog Read-->
                         <h2 class="fs-4 fw-bold mt-4">Analog Read</h2>
