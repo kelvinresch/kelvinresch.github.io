@@ -231,6 +231,28 @@
                         <div class="text-center mb-4">
                             <img src="assets/Lab1/Task 7.2.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
                         </div>
+                        <!-- Section 8: Streaming vs Downloading -->
+                        <h2 class="fs-4 fw-bold mt-4">Streaming vs Downloading</h2>
+                        <p class="card-text">
+                            In this lab, we transmitted data using two methods. Method 1 involved using a notification handler to
+                            sent data constantly at a certain rate (42 payloads/second). Method 2 involved acquiring a bunch of data,
+                            packaging it, and sending it in one big payload. Both of these methods sent data, but using different schemes.
+                            Overall, the payload size is less for method 1, meaning that it is less efficient. You can send roughly the same
+                            number of payloads, but make them bigger to send more data. On the other hand, method 2 sends data recorded in
+                            bursts, which is difficult to use, especially for controls, as Z-transforms assume a constant sample rate.
+                        </p>
+                        <p class="card-text">
+                            Generally, I would choose method 1 because of the consistent sampling rate, even though the data throughput 
+                            is quite limited. The data rate of method 2 is 42 payloads/second * 512 bytes/payload = 21,504 bytes per second
+                            or 21.5 kB/s. By comparison, I just did an internet speed test on Upson Hall internet, and I'm getting around 50 
+                            MB/s, around 2000 times faster.
+                        </p>
+                        <p class="card-text">
+                            With 384 kB of RAM, the Artemis board could cache a lot of data before sending. If a single sample requires a 
+                            4 byte int for time and 4 byte float for temperature, you can take 384k / 8 = 48,000 samples. At the full data 
+                            rate of 21.5 kB/s of BLE, it would take around 17 seconds to send all that data. For such a simple, cheap, and 
+                            wireless system, I think that's pretty good.
+                        </p>
                     </div>
                 </div>
             </div>
