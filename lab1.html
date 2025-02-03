@@ -206,6 +206,31 @@
                         <div class="text-center mb-4">
                             <img src="assets/Lab1/Task 6.1.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
                         </div>
+                        <!-- Section 7: GET_TEMP_READINGS -->
+                        <h2 class="fs-4 fw-bold mt-4">GET_TEMP_READINGS</h2>
+                        <p class="card-text">
+                            Adding the temp array to the transmission again made my payload go over my 255 byte limit, so I decreased the size 
+                            of my array until it fit. Increasing the MAX_MSG_SIZE beyond 255 bytes makes something print "Invalid Command Type: 10".
+                            I think I'm hitting the limit of the Arduino BLE library, so I'll keep my message size below 255 by reducing my array size
+                            from 25 to 20.
+                        </p>
+                        <p class="card-text">
+                            Here's the raw data that comes from the Arduino. The first 20 entries are integers separated by the "|" character. These
+                            are the times of the readings in milliseconds. Then, there is a comma that separates the time and temperature data. The
+                            temperature data follows
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab1/Task 7.1.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            I made a parseString() method that extracts two arrays out of the payload, and each of them is 20 long, meaning
+                            all of the data was transmitted.
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab1/Task 7.2.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
                     </div>
                 </div>
             </div>
