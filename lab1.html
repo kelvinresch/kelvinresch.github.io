@@ -127,8 +127,8 @@
                         <div class="text-center mb-4">
                             <img src="assets/Lab1/Task 1.3.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
                         </div>
-                        <!-- Section 2: Send 3 floats-->
-                        <h2 class="fs-4 fw-bold mt-4">SEND 3 FLOATS</h2>
+                        <!-- Section 2: Send Three Floats-->
+                        <h2 class="fs-4 fw-bold mt-4">SEND THREE FLOATS</h2>
                         <p class="card-text">
                             robot_cmd.get_next_value() also works with float datatypes. The ble library uses the "|" character to parse the floats so that I can pass multiple values in one commanding message.
                         </p>
@@ -158,14 +158,33 @@
                         <div class="text-center mb-4">
                             <img src="assets/Lab1/Task 3.1.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
                         </div>
-                        <!-- Section 4: Microphone -->
-                        <h2 class="fs-4 fw-bold mt-4">Microphone</h2>
+                        <!-- Section 4: Notification Handler -->
+                        <h2 class="fs-4 fw-bold mt-4">Notification Handler</h2>
                         <p class="card-text">
-                            The Artemis also has a microphone on the PCB. We can take the time-series data from this microphone and then do a discrete fourier transform on it. We then take the largest amplitude from the frequency domain and print that frequency. If I whistle different tones, the microcontroller will print out a higher or lower number.
+                            A notification handler is an special method used to pass as an argument into the start_notify() method. start_notify() passes some bytearray into the notification handler whenever a specified characteristic in a service (specified by a UUID) is updated on the Artemis side. By sending time data with each payload, we can measure how fast we can send data between central device and peripheral.
                         </p>
-                        <!-- Embedded Video -->
-                        <div class="ratio ratio-16x9 mb-4">
-                            <iframe src="https://youtube.com/embed/JrX5kW6bG74" title="YouTube video" allowfullscreen></iframe>
+                        <!-- Embedded Image -->
+                        <p class="card-text">
+                            Here is the code for the notification handler. I won't know if it works until I test it in the next section.
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab1/Task 4.1.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <!-- Section 5: GET_TIME -->
+                        <h2 class="fs-4 fw-bold mt-4">GET_TIME</h2>
+                        <p class="card-text">
+                            I wrote a command in the Artemis that will write a value to the tx_characteristic_string as fast as it can for 3000 milliseconds. Each time the notification handler detects that the Artemis' characteristic has updated, it will retrieve that value and get parsed by my notification handler. In my code, I'm sending the time in milliseconds since the loop started, and the number of times the loop has run. This gets handled by my notification handler.
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab1/Task 5.1.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <!-- Embedded Image -->
+                        <p class="card-text">
+                            By the end of 3000 milliseconds, the notification handler was updated 126 times. 126 transactions / 3 seconds results in an effective data transfer rate of 42 payloads per second, or once per 24 milliseconds.
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab1/Task 5.2.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
                         </div>
                     </div>
                 </div>
