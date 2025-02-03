@@ -38,6 +38,43 @@
                 </div>
             </div>
         </header>
+
+<!-- Page Content-->
+        <section class="pt-4">
+            <div class="container px-lg-5">
+                <!-- Single Bootstrap Card -->
+                <div class="card bg-light border-0">
+                    <div class="card-body p-4 p-lg-5">
+                        <!-- Card Content -->
+                        <h1 class="card-title text-center mb-4">Prelab</h1>
+                        <p class="card-text">
+                            The prelab for this was very brief work. The clear instructions allowed me to print my
+                            Artemis' MAC address and use that for connecting with my PC afterwards. 
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab1/Prelab 1.1.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            The Artemis is able to stay connected to my PC for extended periods of time, making it a
+                            convenient platform to collect data on.
+                        </p>
+                        <!-- Codebase -->
+                        <h1 class="card-title text-center mb-4">Codebase</h1>
+                        <p class="card-text">
+                            BLE is primarily a host-peripheral type of network that allows customization for what data the
+                            peripheral should send. The data is organized into services and further organized into characteristics.
+                            These characteristics are normally 512 bytes long, but the ArduinoBLE library only allows 255 bytes. 
+                            To send data, the Artemis will build some payload onto tx_estring_value, and then write everything in
+                            that string to tx_characteristic_string. Now, if the computer requests to the Artemis to return that
+                            characteristic, the data will be sent over. Alternatively, if there is a notification handler set up,
+                            the computer can also be notified when the characteristic is updated. 
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Page Content-->
         <section class="pt-4">
             <div class="container px-lg-5">
