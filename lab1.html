@@ -12,6 +12,8 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet" />
         <!-- Core theme CSS (includes Bootstrap)-->
         <link href="css/styles.css" rel="stylesheet" />
+        <!-- Prism.js CSS for Syntax Highlighting -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.css" rel="stylesheet"> 
     </head>
     <body>
         <!-- Responsive navbar-->
@@ -234,18 +236,30 @@
                         <!-- Section: Arduino Code Snippet -->
                         <h2 class="fs-4 fw-bold mt-4">Arduino Code Snippet</h2>
                         <p class="card-text">Here is a portion of my Arduino code:</p>
-                        <pre><code id="arduino-code"></code></pre>
+                        <pre><code id="arduino-code" class="language-cpp"></code></pre>
 
                         <script>
-                            fetch('https://gist.githubusercontent.com/kelvinresch/31550dc33466a8ae7c41eedabb109b60/raw/214fc4e252d1c534128660cf2e56448335d764be/ble_arduino.ino')
-                                .then(response => response.text())
+                            // Replace with your actual raw Gist URL
+                            const gistUrl = 'https://gist.githubusercontent.com/kelvinresch/31550dc33466a8ae7c41eedabb109b60/raw/214fc4e252d1c534128660cf2e56448335d764be/ble_arduino.ino';
+                        
+                            fetch(gistUrl)
+                                .then(response => {
+                                    if (!response.ok) {
+                                        throw new Error('Failed to fetch Gist');
+                                    }
+                                    return response.text();
+                                })
                                 .then(text => {
-                                    let lines = text.split("\n");  // Split the text into an array of lines
-                                    let snippet = lines.slice(4, 10).join("\n");  // Extract lines 5 to 10
-                                    document.getElementById('arduino-code').innerText = snippet;
+                                    let lines = text.split("\n");  // Split into lines
+                                    let snippet = lines.slice(4, 10).join("\n");  // Extract lines 5-10
+                        
+                                    let codeElement = document.getElementById('arduino-code');
+                                    codeElement.textContent = snippet;  // Insert code
+                                    Prism.highlightElement(codeElement); // Apply Prism.js syntax highlighting
                                 })
                                 .catch(error => console.error('Error loading Arduino code:', error));
                         </script>
+                        
                         <p class="card-text">
                             I made one command called UPDATE_TIME_DATA that fills the array with time data, and another command
                             called SEND_TIME_DATA that moves the contents of the array into tx_characteristic_string. 
@@ -332,5 +346,8 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
         <!-- Core theme JS-->
         <script src="js/scripts.js"></script>
+        <!-- Prism.js JavaScript -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script> 
     </body>
 </html>
