@@ -237,35 +237,32 @@
                             20 datapoints, for example) and then send all that over. So I made some code that did that.
                         </p>
                         <!-- Section: Arduino Code Snippet -->
-                        <pre><code id="arduino-code" class="language-cpp"></code></pre>
-
-                        <script>
-                            // Replace with your actual raw Gist URL
-                            const gistUrl = 'https://gist.githubusercontent.com/kelvinresch/31550dc33466a8ae7c41eedabb109b60/raw/214fc4e252d1c534128660cf2e56448335d764be/ble_arduino.ino';
-                        
-                            fetch(gistUrl)
-                                .then(response => {
-                                    if (!response.ok) {
-                                        throw new Error('Failed to fetch Gist');
-                                    }
-                                    return response.text();
-                                })
-                                .then(text => {
-                                    let lines = text.split("\n");  // Split into lines
-                                    let snippet = lines.slice(220, 234).join("\n");  // Extract lines 220-234
-                        
-                                    let codeElement = document.getElementById('arduino-code');
-                                    codeElement.textContent = snippet;  // Insert code
-                                    Prism.highlightElement(codeElement); // Apply Prism.js syntax highlighting
-                                })
-                                .catch(error => console.error('Error loading Arduino code:', error));
-                        </script>
+                        <pre><code class="language-clike">
+                            int count = 0;
+                            while (count < (sizeof(values) / sizeof(values[0]))) {
+                              tx_estring_value.clear();
+                              while ((tx_estring_value.get_length() < 120) && (count < (sizeof(values) / sizeof(values[0])))) {
+                                tx_estring_value.append(values[count]);
+                                count++;
+                    
+                                if ((tx_estring_value.get_length() < 119) && (count < (sizeof(values) / sizeof(values[0])))) {
+                                  tx_estring_value.append("|");
+                                } else {
+                                  break;
+                                }
+                              }
+                    
+                              tx_characteristic_string.writeValue(tx_estring_value.c_str());
+                        </code></pre>
 
                         <p class="card-text">
-                            
-
-                            I made one command called UPDATE_TIME_DATA that fills the array with time data, and another command
-                            called SEND_TIME_DATA that moves the contents of the array into tx_characteristic_string. 
+                            The code I wrote fills tx_estring_value until its close to full, and then updates the characteristic. 
+                            Then, it fills tx_estring_value again and repeats until it has iterated over the entire data array, 
+                            which can fill the rest of memory.
+                        </p>
+                        <p class="card-test">
+                            UPDATE_TIME_DATA collects a bunch of datapoints into the array, and then SEND_TIME_DATA sends all 
+                            of that data in an efficient manner.
                         </p>
                         <!-- Embedded Image -->
                         <div class="text-center mb-4">
