@@ -262,7 +262,8 @@
                         </p>
                         <p class="card-test">
                             UPDATE_TIME_DATA collects a bunch of datapoints into the array, and then SEND_TIME_DATA sends all 
-                            of that data in an efficient manner.
+                            of that data in an efficient manner. In this picture, I sent an array of time data 2000 samples long in
+                            a little under a second.
                         </p>
                         <!-- Embedded Image -->
                         <div class="text-center mb-4">
@@ -271,41 +272,60 @@
                         <!-- Section 7: GET_TEMP_READINGS -->
                         <h2 class="fs-4 fw-bold mt-4">GET_TEMP_READINGS</h2>
                         <p class="card-text">
-                            Adding the temp array to the transmission again made my payload go over my 255 byte limit, so I decreased the size 
-                            of my array until it fit. Increasing the MAX_MSG_SIZE beyond 255 bytes makes something print "Invalid Command Type: 10".
-                            I think I'm hitting the limit of the Arduino BLE library, so I'll keep my message size below 255 by reducing my array size
-                            from 25 to 20.
+                            With all the infrastructure to effectively send as much data as I want from the previous section, 
+                            all I need to do to add temperature data is add the second array, populate it, and add a "," 
+                            character in the characteristic's string.
                         </p>
                         <p class="card-text">
-                            Here's the raw data that comes from the Arduino. The first 20 entries are integers separated by the "|" character. These
-                            are the times of the readings in milliseconds. Then, there is a comma that separates the time and temperature data. The
-                            temperature data follows
+                            Effectively, I'm sending "time,temperature|time,temperature|..." By setting up a notification handler 
+                            to continuously store the data into a list, I can collect 2,000 data samples over 20 seconds. My 
+                            notification handler stores all the data in a "times" and "temps" list. You can see there are 10 
+                            milliseconds between each sample.
                         </p>
                         <!-- Embedded Image -->
                         <div class="text-center mb-4">
                             <img src="assets/Lab1/Task 7.1.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
                         </div>
                         <p class="card-text">
-                            I made a parseString() method that extracts two arrays out of the payload, and each of them is 20 long, meaning
-                            all of the data was transmitted.
+                            If I plot the data:
                         </p>
                         <!-- Embedded Image -->
                         <div class="text-center mb-4">
                             <img src="assets/Lab1/Task 7.2.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
                         </div>
+                        <p class="card-text">
+                            As you can see, there are some pretty significant sampling quantizations happening here. Luckiy for us,
+                            there are a ton of samples. So, I made a quick convolution moving average in numpy and applied it to the
+                            data:
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab1/Task 7.3.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            This method of sending data is super powerful because you can store over 300 kB of data in the chip's SRAM,
+                            and then send all of it wirelessly. I don't think it takes that much compute either. The main slowdown is
+                            waiting between updating the characteristic so that the notification handler has time to retrieve it, but
+                            I'm sure you could set up a time-based alarm interrupt to send the data so you're not idling, or if the 
+                            chip knows when something is accessing its characteristic, then interrupt based on that semaphore instead.
+                            Easy peasy.
+                        </p>
                         <!-- Section 8: Streaming vs Downloading -->
                         <h2 class="fs-4 fw-bold mt-4">Streaming vs Downloading</h2>
                         <p class="card-text">
                             In this lab, we transmitted data using two methods. Method 1 involved using a notification handler to
                             sent data constantly at a certain rate (42 payloads/second). Method 2 involved acquiring a bunch of data,
-                            packaging it, and sending it in one big payload. Both of these methods sent data, but using different schemes.
+                            packaging it, and sending it in one big set of payloads. Both of these methods sent data, but using different schemes.
                             Overall, the payload size is less for method 1, meaning that it is less efficient. You can send roughly the same
-                            number of payloads, but make them bigger to send more data. On the other hand, method 2 sends data recorded in
-                            bursts, which is difficult to use, especially for controls, as Z-transforms assume a constant sample rate.
+                            number of payloads, but make them bigger to send more data. Method 2 is far better in my opinion. Furthermore,
+                            you could parallelize data collection and sending data using time-based interrupts for the data sampling and
+                            event-based interrupts for sending data so that you have both a high datarate and constant + consistent data 
+                            collection. One could build a system that first collects a burst of data and then sends it, but an inconsistent
+                            sampling rate would really mess us any Z-transformation math or controls that rely on a consistent sampling rate.
                         </p>
                         <p class="card-text">
-                            Generally, I would choose method 1 because of the consistent sampling rate, even though the data throughput 
-                            is quite limited. The data rate of method 2 is 42 payloads/second * 512 bytes/payload = 21,504 bytes per second
+                            Generally, I would choose method 2 because of the fast data rate. The data rate of method 2 is 42 payloads/second 
+                            * 512 bytes/payload = 21,504 bytes per second
                             or 21.5 kB/s. By comparison, I just did an internet speed test on Upson Hall internet, and I'm getting around 50 
                             MB/s, around 2000 times faster.
                         </p>
