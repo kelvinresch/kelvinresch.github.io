@@ -210,6 +210,8 @@ void handle_command() {
           delay(10);
         }
 
+        values_pos = 0;
+
         break;
       }
 
