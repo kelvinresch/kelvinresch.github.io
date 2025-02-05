@@ -238,21 +238,21 @@
                         </p>
                         <!-- Section: Arduino Code Snippet -->
                         <pre><code class="language-clike">
-                            int count = 0;
-                            while (count < (sizeof(values) / sizeof(values[0]))) {
-                              tx_estring_value.clear();
-                              while ((tx_estring_value.get_length() < 120) && (count < (sizeof(values) / sizeof(values[0])))) {
-                                tx_estring_value.append(values[count]);
-                                count++;
-                    
-                                if ((tx_estring_value.get_length() < 119) && (count < (sizeof(values) / sizeof(values[0])))) {
-                                  tx_estring_value.append("|");
-                                } else {
-                                  break;
-                                }
-                              }
-                    
-                              tx_characteristic_string.writeValue(tx_estring_value.c_str());
+    int count = 0;
+    while (count < (sizeof(values) / sizeof(values[0]))) {
+        tx_estring_value.clear();
+        while ((tx_estring_value.get_length() < 120) && (count < (sizeof(values) / sizeof(values[0])))) {
+        tx_estring_value.append(values[count]);
+        count++;
+
+        if ((tx_estring_value.get_length() < 119) && (count < (sizeof(values) / sizeof(values[0])))) {
+            tx_estring_value.append("|");
+        } else {
+            break;
+        }
+        }
+
+        tx_characteristic_string.writeValue(tx_estring_value.c_str());
                         </code></pre>
 
                         <p class="card-text">
