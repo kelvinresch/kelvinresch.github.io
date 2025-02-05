@@ -251,7 +251,7 @@
                                 })
                                 .then(text => {
                                     let lines = text.split("\n");  // Split into lines
-                                    let snippet = lines.slice(4, 10).join("\n");  // Extract lines 5-10
+                                    let snippet = lines.slice(220, 234).join("\n");  // Extract lines 220-234
                         
                                     let codeElement = document.getElementById('arduino-code');
                                     codeElement.textContent = snippet;  // Insert code
@@ -259,7 +259,7 @@
                                 })
                                 .catch(error => console.error('Error loading Arduino code:', error));
                         </script>
-                        
+
                         <p class="card-text">
                             I made one command called UPDATE_TIME_DATA that fills the array with time data, and another command
                             called SEND_TIME_DATA that moves the contents of the array into tx_characteristic_string. 
