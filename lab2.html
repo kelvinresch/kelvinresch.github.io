@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Fast Robots Spring 2025 - Kelvin Resch</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="assets/robot.ico" />
+        <!-- Bootstrap icons-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="css/styles.css" rel="stylesheet" />
+        <!-- Prism.js CSS for Syntax Highlighting -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    </head>
+    <body>
+        <!-- Prism.js JavaScript -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.js"></script>
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>  -->
+        <!-- Responsive navbar-->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-danger">
+            <div class="container px-lg-5">
+                <a class="navbar-brand" href="https://kelvinresch.github.io">Lab 1</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="https://kelvinresch.github.io">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="https://www.linkedin.com/in/kelvin-resch">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Header-->
+        <header class="py-5">
+            <div class="container px-lg-5">
+                <div class="p-4 p-lg-5 bg-light rounded-3 text-center">
+                    <div class="m-4 m-lg-5">
+                        <h1 class="display-5 fw-bold">Lab 1</h1>
+                        <p class="fs-4">This first lab covers the basics of the Artemis Nano and Low Energy Bluetooth</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+<!-- Page Content-->
+        <section class="pt-4">
+            <div class="container px-lg-5">
+                <!-- Single Bootstrap Card -->
+                <div class="card bg-light border-0">
+                    <div class="card-body p-4 p-lg-5">
+                        <!-- Card Content -->
+                        <h1 class="card-title text-center mb-4">Prelab</h1>
+                        <p class="card-text">
+                            The prelab for this was very brief work. The clear instructions allowed me to print my
+                            Artemis' MAC address and use that for connecting with my PC afterwards. 
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab1/Prelab 1.1.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            The Artemis is able to stay connected to my PC for extended periods of time, making it a
+                            convenient platform to collect data on.
+                        </p>
+                        <!-- Codebase -->
+                        <h1 class="card-title text-center mb-4">Codebase</h1>
+                        <p class="card-text">
+                            BLE is primarily a host-peripheral type of network that allows customization for what data the
+                            peripheral should send. The data is organized into services and further organized into characteristics.
+                            These characteristics are normally 512 bytes long, but the ArduinoBLE library only allows 255 bytes. 
+                            To send data, the Artemis will build some payload onto tx_estring_value, and then write everything in
+                            that string to tx_characteristic_string. Now, if the computer requests to the Artemis to return that
+                            characteristic, the data will be sent over. Alternatively, if there is a notification handler set up,
+                            the computer can also be notified when the characteristic is updated. 
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Page Content-->
+        <section class="pt-4">
+            <div class="container px-lg-5">
+                <!-- Single Bootstrap Card -->
+                <div class="card bg-light border-0">
+                    <div class="card-body p-4 p-lg-5">
+                        <!-- Card Content -->
+                        <h1 class="card-title text-center mb-4">Lab 1A</h1>
+                        <p class="card-text">
+                            The purpose of this first week was to get familiar with the Artemis Nano microcontroller. We experimented with blinking, serial communication, printing, analog reading, and the onboard microphone.
+                        </p>
+                        <!-- Section 1: Blink-->
+                        <h2 class="fs-4 fw-bold mt-4">Blink</h2>
+                        <p class="card-text">
+                            An LED is connected to GPIO pin 19 on the Artemis microcontroller. By pulling this pin high and low and sleeping in between, the pin will blink.
+                        </p>
+                        <!-- Embedded Video -->
+                        <div class="ratio ratio-16x9 mb-4">
+                            <iframe src="https://youtube.com/embed/PMNKNEziqdA" title="YouTube video" allowfullscreen></iframe>
+                        </div>
+                        <!-- Section 2: Serial communication and printing-->
+                        <h2 class="fs-4 fw-bold mt-4">Serial communication and printing</h2>
+                        <p class="card-text">
+                            After sending code to the microcontroller, the PC can communicate with the microcontroller. We can make the microcontroller "echo" things written to the PC. We do this by programming the microcontroller to print any text it receives from the PC to the serial output. Then, this text can be read from the PC.
+                        </p>
+                        <!-- Embedded Video -->
+                        <div class="ratio ratio-16x9 mb-4">
+                            <iframe src="https://youtube.com/embed/ZGa1I_31-i4" title="YouTube video" allowfullscreen></iframe>
+                        </div>
+                        <!-- Section 3: Analog Read-->
+                        <h2 class="fs-4 fw-bold mt-4">Analog Read</h2>
+                        <p class="card-text">
+                            In addition to digital IO, the microcontroller also has analog input channels. These analog input channels are connected to 14-bit ADCs. I think they realistically have around 8.5 bits of precision though. We read multiple analog input channels and printed them to the console. One of the channels measured die temperature, and you can see that when I hold the chip with my thumb, the temperature number increases and when I blow on the chip, the temperature decreases.
+                        </p>
+                        <!-- Embedded Video -->
+                        <div class="ratio ratio-16x9 mb-4">
+                            <iframe src="https://youtube.com/embed/k3QEA90rxQw" title="YouTube video" allowfullscreen></iframe>
+                        </div>
+                        <!-- Section 4: Microphone-->
+                        <h2 class="fs-4 fw-bold mt-4">Microphone</h2>
+                        <p class="card-text">
+                            The Artemis also has a microphone on the PCB. We can take the time-series data from this microphone and then do a discrete fourier transform on it. We then take the largest amplitude from the frequency domain and print that frequency. If I whistle different tones, the microcontroller will print out a higher or lower number.
+                        </p>
+                        <!-- Embedded Video -->
+                        <div class="ratio ratio-16x9 mb-4">
+                            <iframe src="https://youtube.com/embed/JrX5kW6bG74" title="YouTube video" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Page Content-->
+        <section class="pt-4">
+            <div class="container px-lg-5">
+                <!-- Single Bootstrap Card -->
+                <div class="card bg-light border-0">
+                    <div class="card-body p-4 p-lg-5">
+                        <!-- Card Content -->
+                        <h1 class="card-title text-center mb-4">Lab 1B</h1>
+                        <p class="card-text">
+                            This is the second part of Lab 1. Now that I've built familiarity with the Artemis microcontroller, I'm practicing building bluetooth systems on it. This section of Lab 1 will document my progress.
+                        </p>
+                        <!-- Section 1: ECHO -->
+                        <h2 class="fs-4 fw-bold mt-4">ECHO</h2>
+                        <p class="card-text">
+                            Using robot_cmd.get_next_value(), I can retrieve the string sent from my pc to the Artemis over Bluetooth. I can then send the string back by storing the string in tx_estring_value and sending it over using writeValue(). To confirm that this worked, I also serial printed the text to the serial monitor in the Arduino IDE.
+                        </p>
+                        <!-- Embedded Image -->
+                        <p class="card-text">
+                            After importing ble, I can connected to the Artemis from my laptop.
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab1/Task 1.1.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <!-- Embedded Image -->
+                        <p class="card-text">
+                            I can call the ECHO command, pass in text, and see it get sent back from the Artemis.
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab1/Task 1.2.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <!-- Embedded Image -->
+                        <p class="card-text">
+                            The Arduino IDE serial monitor also confirms that the Artemis received the correct command.
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab1/Task 1.3.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <!-- Section 2: Send Three Floats-->
+                        <h2 class="fs-4 fw-bold mt-4">SEND THREE FLOATS</h2>
+                        <p class="card-text">
+                            robot_cmd.get_next_value() also works with float datatypes. The ble library uses the "|" character to parse the floats so that I can pass multiple values in one commanding message.
+                        </p>
+                        <!-- Embedded Image -->
+                        <p class="card-text">
+                            After sending the floats 1.0, 2.0, and 3.0, we should expect to see that they should up in the serial monitor on the Arduino IDE.
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab1/Task 2.1.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <!-- Embedded Image -->
+                        <p class="card-text">
+                            Seeing these values show up in the serial monitor confirms that the code works.
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab1/Task 2.2.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <!-- Section 3: GET_TIME_MILLIS -->
+                        <h2 class="fs-4 fw-bold mt-4">GET_TIME_MILLIS</h2>
+                        <p class="card-text">
+                            Now that we've successfully sent around data generated by the PC, we can try sending data generated by the Artemis itself. 
+                        </p>
+                        <!-- Embedded Image -->
+                        <p class="card-text">
+                            Calling the command makes the Artemis send back the time since boot in milliseconds. According to the data, the Artemis had been on for a little under 5 minutes before this command was called.
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab1/Task 3.1.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <!-- Section 4: Notification Handler -->
+                        <h2 class="fs-4 fw-bold mt-4">Notification Handler</h2>
+                        <p class="card-text">
+                            A notification handler is an special method used to pass as an argument into the start_notify() method. start_notify() passes some bytearray into the notification handler whenever a specified characteristic in a service (specified by a UUID) is updated on the Artemis side. By sending time data with each payload, we can measure how fast we can send data between central device and peripheral.
+                        </p>
+                        <!-- Embedded Image -->
+                        <p class="card-text">
+                            Here is the code for the notification handler. I won't know if it works until I test it in the next section.
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab1/Task 4.1.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <!-- Section 5: GET_TIME -->
+                        <h2 class="fs-4 fw-bold mt-4">GET_TIME</h2>
+                        <p class="card-text">
+                            I wrote a command in the Artemis that will write a value to the tx_characteristic_string as fast as it can for 3000 milliseconds. Each time the notification handler detects that the Artemis' characteristic has updated, it will retrieve that value and get parsed by my notification handler. In my code, I'm sending the time in milliseconds since the loop started, and the number of times the loop has run. This gets handled by my notification handler.
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab1/Task 5.1.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <!-- Embedded Image -->
+                        <p class="card-text">
+                            By the end of 3000 milliseconds, the notification handler was updated 126 times. 126 transactions / 3 seconds results in an effective data transfer rate of 42 payloads per second, or once per 24 milliseconds.
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab1/Task 5.2.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <!-- Section 6: SEND_TIME_DATA -->
+                        <h2 class="fs-4 fw-bold mt-4">SEND_TIME_DATA</h2>
+                        <p class="card-text">
+                            This one was a little more complicated. I initially made an array of length 100 and then sent each data point
+                            into the characteristic one at a time, but since the rate at which notification handler can read data is my main
+                            bottleneck, this method is really inefficient. It would be better to fill the characteristic with data, (with like,
+                            20 datapoints, for example) and then send all that over. So I made some code that did that.
+                        </p>
+                        <!-- Section: Arduino Code Snippet -->
+                        <pre><code class="language-clike">
+    int count = 0;
+    while (count < (sizeof(values) / sizeof(values[0]))) {
+        tx_estring_value.clear();
+        while ((tx_estring_value.get_length() < 120) && (count < (sizeof(values) / sizeof(values[0])))) {
+        tx_estring_value.append(values[count]);
+        count++;
+
+        if ((tx_estring_value.get_length() < 119) && (count < (sizeof(values) / sizeof(values[0])))) {
+            tx_estring_value.append("|");
+        } else {
+            break;
+        }
+        }
+
+        tx_characteristic_string.writeValue(tx_estring_value.c_str());
+                        </code></pre>
+
+                        <p class="card-text">
+                            The code I wrote fills tx_estring_value until its close to full, and then updates the characteristic. 
+                            Then, it fills tx_estring_value again and repeats until it has iterated over the entire data array, 
+                            which can fill the rest of memory.
+                        </p>
+                        <p class="card-test">
+                            UPDATE_TIME_DATA collects a bunch of datapoints into the array, and then SEND_TIME_DATA sends all 
+                            of that data in an efficient manner. In this picture, I sent an array of time data 2000 samples long in
+                            a little under a second.
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab1/Task 6.1.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <!-- Section 7: GET_TEMP_READINGS -->
+                        <h2 class="fs-4 fw-bold mt-4">GET_TEMP_READINGS</h2>
+                        <p class="card-text">
+                            With all the infrastructure to effectively send as much data as I want from the previous section, 
+                            all I need to do to add temperature data is add the second array, populate it, and add a "," 
+                            character in the characteristic's string.
+                        </p>
+                        <p class="card-text">
+                            Effectively, I'm sending "time,temperature|time,temperature|..." By setting up a notification handler 
+                            to continuously store the data into a list, I can collect 2,000 data samples over 20 seconds. My 
+                            notification handler stores all the data in a "times" and "temps" list. You can see there are 10 
+                            milliseconds between each sample.
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab1/Task 7.1.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            In this test, I started blowing gently on the Artemis once I started collecting data, and you can see the 
+                            temperature start at 72 degrees, rise over a few seconds, and then saturate at around 84 degrees F. 
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab1/Task 7.2.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            As you can see, there are some pretty significant sampling quantizations happening here. Luckily for us,
+                            there are a shit ton of samples. So, I made a quick convolution moving average in numpy and applied it to the
+                            data:
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab1/Task 7.3.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            This method of sending data is super powerful because you can store over 300 kB of data in the chip's SRAM,
+                            and then send all of it wirelessly. I don't think it takes that much compute either. The main slowdown is
+                            waiting between updating the characteristic so that the notification handler has time to retrieve it, but
+                            I'm sure you could set up a time-based alarm interrupt to send the data so you're not idling, or if the 
+                            chip knows when something is accessing its characteristic, then interrupt based on that semaphore instead.
+                            Easy peasy.
+                        </p>
+                        <!-- Section 8: Streaming vs Downloading -->
+                        <h2 class="fs-4 fw-bold mt-4">Streaming vs Downloading</h2>
+                        <p class="card-text">
+                            In this lab, we transmitted data using two methods. Method 1 involved using a notification handler to
+                            sent data constantly at a certain rate (42 payloads/second). Method 2 involved acquiring a bunch of data,
+                            packaging it, and sending it in one big set of payloads. Both of these methods sent data, but using different schemes.
+                            Overall, the payload size is less for method 1, meaning that it is less efficient. You can send roughly the same
+                            number of payloads, but make them bigger to send more data. Method 2 is far better in my opinion. Furthermore,
+                            you could parallelize data collection and sending data using time-based interrupts for the data sampling and
+                            event-based interrupts for sending data so that you have both a high datarate and constant + consistent data 
+                            collection. One could build a system that first collects a burst of data and then sends it, but an inconsistent
+                            sampling rate would really mess us any Z-transformation math or controls that rely on a consistent sampling rate.
+                        </p>
+                        <p class="card-text">
+                            Generally, I would choose method 2 because of the fast data rate. The data rate of method 2 is 42 payloads/second 
+                            * 512 bytes/payload = 21,504 bytes per second
+                            or 21.5 kB/s. By comparison, I just did an internet speed test on Upson Hall internet, and I'm getting around 50 
+                            MB/s, around 2000 times faster.
+                        </p>
+                        <p class="card-text">
+                            With 384 kB of RAM, the Artemis board could cache a lot of data before sending. If a single sample requires a 
+                            4 byte int for time and 4 byte float for temperature, you can take 384k / 8 = 48,000 samples. At the full data 
+                            rate of 21.5 kB/s of BLE, it would take around 17 seconds to send all that data. For such a simple, cheap, and 
+                            wireless system, I think that's pretty good.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Page Content-->
+        <section class="pt-4">
+            <div class="container px-lg-5">
+                <!-- Single Bootstrap Card -->
+                <div class="card bg-light border-0">
+                    <div class="card-body p-4 p-lg-5">
+                        <!-- Card Content -->
+                        <h1 class="card-title text-center mb-4">Lab 1B Code</h1>
+                        <p class="card-text">
+                            Here's the Artemis code I used to do everything in Lab 1B.
+                        </p>
+                        <p>
+                            <a href="assets/Lab1/ble_arduino.ino" download>Download Artemis Code</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Footer-->
+        <footer class="py-5 bg-dark">
+            <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Kelvin Resch 2025</p></div>
+        </footer>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="js/scripts.js"></script>
+    </body>
+</html>
