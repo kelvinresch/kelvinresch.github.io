@@ -143,7 +143,7 @@
                 <div class="card bg-light border-0">
                     <div class="card-body p-4 p-lg-5">
                         <!-- Card Content -->
-                        <h1 class="card-title text-center mb-4">Acceleration</h1>
+                        <h1 class="card-title text-center mb-4">Accelerometer</h1>
                         <p class="card-text">
                             After downloading the ICM 20948 library in the Arduino IDE, connecting up the IMU, and opening the Lecture 4
                             demo code, I could retrieve IMU data. This is what my setup looked like:
@@ -152,7 +152,302 @@
                         <div class="text-center mb-4">
                             <img src="assets/Lab2/IMU_setup 1.1.jpg" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
                         </div>
-                        
+                        <p class="card-text">
+                            By using the fact that the accelerometer is always sensing a 1 g acceleration straight downward (gravity),
+                            we can measure roll and pitch with a separate method from the gyroscope. The accelerometer data is driftless,
+                            but has some pretty severe noise issues.
+                        </p>
+                        <p class="card-text">
+                            A 0 degrees roll and 0 degrees pitch, the accelerometer data is quite good. However, because atan2 becomes poorly
+                            conditioned when either the x or y component approaches 90 degrees, we can get really noisy data around there.
+                        </p>
+                        <p class="card-text">
+                            Graph of 0 degrees roll and 0 degrees pitch:
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab2/0r0p.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            Graph of -90 degrees roll and 0 degrees pitch. The accelerometer roll measurement is accurate, and the gyroscope
+                            roll measurement has drift, but both are okay. However, the accelerometer pitch measurement is all over the place.
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab2/-90r0p.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            Graph of 90 degrees roll and 0 degrees pitch. Results are similar to the previous case
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab2/90r0p.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            Graph of 0 degrees roll and -90 degrees pitch. Here, the accelerometer pitch is accurate, and the gyroscope measurement
+                            has drift, but both are fairly acceptable. But now that our pitch measurement is good, the roll measurement from the 
+                            accelerometer is super noisy and jumping between -180 and 180 degrees.
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab2/0r-90p.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            Graph of 0 degrees roll and 90 degrees pitch. These results are similar to the previous experiment.
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab2/0r90p.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <h2 class="card-title text-center mb-4">Accelerometer Accuracy</h2>
+                        <p class="card-text">
+                            We can do a two-point calibration to create a corrected value of the sensor in case it has some error. When I
+                            orient the accelerometer where the y-axis points straight down, the accelerometer reports a value of 990 milli g.
+                            When I orient the accelerometer so that the y-axis is pointing straight up, the accelerometer reports 1015 milli g.
+                            Online it says that gravity fluctuates around different parts of the Earth, and according to a <a href=
+                            "https://www.sensorsone.com/local-gravity-calculator/#height" target="_blank" rel="noopener 
+                            noreferrer">geographic gravity calculator</a>, 1 g is 9.803 m/s^2. 
+                        </p>
+                        <p class="card-text">
+                            Assuming the accelerometer uses 9.81 m/s^2 as a reference value, 990 milli g = 9.712 m/s^2 and 1015 milli g =
+                            9.957 m/s^2. The formula to get a corrected value from a two-point calibration is: 
+                        </p>
+                        <p class="card-text">
+                            CorrectedValue = (((RawHigh - RawLow) * ReferenceRange) / RawRange) + ReferenceLow.
+                        </p>
+                        <p class="card-text">
+                            RawHigh = 9.712 m/s^2
+                        </p>
+                        <p class="card-text">
+                            RawLow = -9.957 m/s^2
+                        </p>
+                        <p class="card-text">
+                            ReferenceRange = 9.803 * 2 m/s^2
+                        </p>
+                        <p class="card-text">
+                            RawRange = 9.712 + 9.957 m/s^2
+                        </p>
+                        <p class="card-text">
+                            ReferenceLow = -9.803 m/s^2
+                        </p>
+                        <p class="card-text">
+                            So, my corrected value is 9.803 m/s^2. This means that I've created a reference around
+                            1 g, and if I use this formula for my measurements from now on, anything around this 1 g
+                            value will be much more accurate.
+                        </p>
+                        <p class="card-text">
+                            Overall, the data from the accelerometer is very accurate and has low noise. I still wouldn't
+                            use it for dead reckoning, but it would be a great addition to a Kalman filter in the coming weeks.
+                        </p>
+                        <h1 class="card-title text-center mb-4">Accelerometer Noise Analysis</h1>
+                        <p class="card-text">
+                            If I rotate the accelerometer at a slow rate back and forth, I can introduce a signal, and by doing
+                            a Fourier Transform on my output, I can measure how much noise was introduced. I'm assuming that my hand
+                            can only introduce low frequency content into the the sensor, so I'll consider any high frequency content
+                            as noise. The purpose here is to find what the threshold for "high frequency content" should be.
+                        </p>
+                        <p class="card-text">
+                            Here is the signal I put into the IMU:
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab2/2_1.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            After running the Fourier transform and turning discrete frequency into time-based frequency, I 
+                            get the following:
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab2/2_2.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            Looking at the data, I see my signal input at low freuqency. Then I see some noise or vibration
+                            from my hand, a spike at 10 Hz, and then it drops off after that. Do I'm going to choose 8 Hz as
+                            my cutoff frequency to tune out whatever is causing that 10 Hz spike. I'm making a first-order 
+                            low pass filter, so that means the output drops off at a rate of -20 dB per decade after the cutoff
+                            frequency. This means the 10 Hz spike will be quite severely attenuated, and anything after that will
+                            be negligible.
+                        </p>
+                        <p class="card-text">
+                            There is some noise on my signal. I wouldn't call it negligible. However, I would consider my overall 
+                            SNR to be quite good. The noise has a thermal component, so higher operating temperatures would cause
+                            more noise, and also an EMI component, so operating the IMU near a motor would also mess with readings.
+                            The chip itself is already set to a low-noise mode, so that also explains why the data is quite stable.
+                        </p>
+                        <p class="card-text">
+                            I tried tapping slowly on the table, but I didn't see any interesting frequency content in the signal.
+                            It seems my noise floor is around 50 dB. Here's the time-domain plot of me tapping on the table:
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab2/2_3.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            And here is the frequency domain. You can see a spike at DC because the chip isn't lying fully flat
+                            on the table and I'm measuring the x axis here.
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab2/2_4.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            Since the frequency content of this signal is pretty evenly spread out, this is a good signal to test
+                            a low-pass filter. If I choose fc = 8, I can use the period between my samples to calculate an alpha of 0.355.
+                        </p>
+                        <p class="card-text">
+                            Applying this LPF to my data yields this unintelligible fourier transform:
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab2/2_5.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            However, after applying a rolling average to the fourier transform, a linear decrease appears around 
+                            log10(8 Hz) = 0.9!
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab2/2_6.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            Even though I'm not measuring over a large range of frequencies, this shows that my low pass filter works
+                            as intended.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="pt-4">
+            <div class="container px-lg-5">
+                <!-- Single Bootstrap Card -->
+                <div class="card bg-light border-0">
+                    <div class="card-body p-4 p-lg-5">
+                        <!-- Card Content -->
+                        <h1 class="card-title text-center mb-4">Gyroscope</h1>
+                        <p class="card-text">
+                            I can get roll and pitch data from both my gyroscope and my accelerometer, but both data sources
+                            have tradeoffs. For example, my gyroscope data has drift, but low noise, and my accelerometer data
+                            has noise but no drift. Here's a plot of my gyroscope and accelerometer data for roll:
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab2/3_1.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            This seems great, but while my roll is near 90, my pitch from my accelerometer is completely unusable.
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab2/3_2.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            I worry about this issue later when I create a complementary filter.
+                        </p> 
+                        <p class="card-text">
+                            Anyways, I can solve part of the noisy data from the accelerometer by adding a low pass filter with a
+                            cutoff frequency of 8 Hz, using results from my earlier filter tuning.
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab2/3_3.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            If I reduce my sampling rate, the drift doesn't significantly increase with a simple sine wave, but I
+                            can imagine it would increase my drift a ton since I can't capture my motion as well. Changing the 
+                            sampling frequency does affect the low pass filter, however, and I'm seeing it affect my data since the
+                            LPF is invariant on discrete time, not actual time.
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab2/3_4.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            Coming back to the complementary filter, I have two data streams that I want to combine, and I want something
+                            that has slightly more fidelity than an average of the two data sources. So the complementary filter allows
+                            me to put weights on my average. With a theta = 0.8 and depending primarily on acceleration data, I get a 
+                            smooth, driftless value:
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab2/3_5.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="pt-4">
+            <div class="container px-lg-5">
+                <!-- Single Bootstrap Card -->
+                <div class="card bg-light border-0">
+                    <div class="card-body p-4 p-lg-5">
+                        <!-- Card Content -->
+                        <h1 class="card-title text-center mb-4">Sample Data</h1>
+                        <p class="card-text">
+                            If I get rid of my delay that I put in my data acquisition loop, I get 1000 samples in 3.1 seconds. In
+                            other words, I have a sampling rate of 1000/3.1 = 322 Hz. With optimization of the Artemis code, however,
+                            I could get higher sampling rates. Each data reading is different from the last, so I'm not reading 
+                            faster than my sensor can provide data, yet.
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab2/4_1.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <h2 class="card-title text-center mb-4">Discussion on Storing Data</h2>
+                        <p class="card-text">
+                            It more modular and easier to add and remove things when you store separate arrays in the short run.
+                            In the long run, you could make one large array and have your "send to PC" function smartly load
+                            data based on some enumeration or something, but that's just a quality of life upgrade for the 
+                            programmer, not an optimization for runtime. Storing data in multiple or one big array also takes up
+                            the same amount of memory. So, for the ease of development, I believe that storing accelerometer and 
+                            gyroscope data in separate arrays is the better choice.
+                        </p>
+                        <p class="card-text">
+                            As I've worked with bigger and bigger data, I have thought about rewriting BLE to use integers and 
+                            floats instead of strings, because strings are really memory-inefficient for storing numbers. A float
+                            with 5 digits and a period takes 24 bytes to store, as opposed to four bytes for the float and one byte
+                            perhaps for some null character. Most of the math that I do on this microcontroller doesn't need double.
+                            In fact, I think I don't even need floats and could get away with fixed-point arithmetic. So, as long 
+                            as it's not Strings or doubles, I'm fine with either data type between floats and ints.
+                        </p>
+                        <p class="card-text">
+                            The Artemis Nano has 384 kB of RAM. If my program takes up 17% of that, then that leaves me with around 310
+                            kB of memory to use at runtime. Assuming 9 tables of some four-byte datatype (ints or floats), that leaves me
+                            with a little over 8000 as the length of my data arrays. That's actually less data than I anticipated. This is
+                            like 25 seconds of data at the full measuring rate.
+                        </p>
+                        <p class="card-text">
+                            To collect 5 seconds worth of data, all I need to do is increase my array size and flag my data collection
+                            loop to stop after 5 seconds. The issue I ran into here is maintaining a stable connection over such a long
+                            period of time. At least that's what I think it is. Anyway, here's some data for 5 seconds. It's about 1600
+                            data points and there are another four registers for all pitch data that I haven't plotted.
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab2/4_2.png" alt="Echo Example Image" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="pt-4">
+            <div class="container px-lg-5">
+                <!-- Single Bootstrap Card -->
+                <div class="card bg-light border-0">
+                    <div class="card-body p-4 p-lg-5">
+                        <!-- Card Content -->
+                        <h1 class="card-title text-center mb-4">Recording a Stunt</h1>
+                        <p class="card-text">
+                            I spent some time playing with the RC car and got it to do a few flips. With more battery,
+                            I think you could flip just by decelerating hard at high speed, but I did it against some walls.
+                        </p>
+                        <!-- Embedded Video -->
+                        <div class="ratio ratio-16x9 mb-4">
+                            <iframe src="https://youtube.com/embed/CoIeOxLfph8" title="YouTube video" allowfullscreen></iframe>
+                        </div>
                     </div>
                 </div>
             </div>
