@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Fast Robots Spring 2025 - Kelvin Resch</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="assets/robot.ico" />
+        <!-- Bootstrap icons-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="css/styles.css" rel="stylesheet" />
+        <!-- Prism.js CSS for Syntax Highlighting -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    </head>
+    <body>
+        <!-- Prism.js JavaScript -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.js"></script>
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>  -->
+        <!-- Responsive navbar-->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-danger">
+            <div class="container px-lg-5">
+                <a class="navbar-brand" href="https://kelvinresch.github.io">Lab 3</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="https://kelvinresch.github.io">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="https://www.linkedin.com/in/kelvin-resch">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Header-->
+        <header class="py-5">
+            <div class="container px-lg-5">
+                <div class="p-4 p-lg-5 bg-light rounded-3 text-center">
+                    <div class="m-4 m-lg-5">
+                        <h1 class="display-5 fw-bold">Lab 3</h1>
+                        <p class="fs-4">Time of Flight Sensors</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+<!-- Page Content-->
+        <section class="pt-4">
+            <div class="container px-lg-5">
+                <!-- Single Bootstrap Card -->
+                <div class="card bg-light border-0">
+                    <div class="card-body p-4 p-lg-5">
+                        <!-- Card Content -->
+                        <h1 class="card-title text-center mb-4">Prelab</h1>
+                        <h2 class="card-title text-center mb-4">Sensor I2C <Address></Address>ddresses</h2>
+                        <p class="card-text">
+                            This is a Time-of-Flight sensor. It works by emitting a light pulse and then measuring the time it takes
+                            for that pulse to come back. In order to use this sensor, I need to hook it up to my Artemis microcontroller
+                            over I2C. According to the Pololu site for the <a href="https://www.pololu.com/product/3415" target="_blank" 
+                            rel="noopener noreferrer">VL53L1X Time-of-Flight Sensor</a>, the sensor's 7-bit I2C address is 1010010b, which
+                            makes sense because there is a private int called "_i2cAddress = 0x52" in Sparkfun's library header file, which
+                            corresponds to that address.
+                        </p>
+                        <p class="card-text">
+                            When I print the I2C address into serial monitor from the sensor, I get 82, which is 0x52 in hex and 1010010b in
+                            binary.
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab3/Prelab_1.png" alt="Prelab_1" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <h2 class="card-title text-center mb-4">2 ToF Sensors</h2>
+                        <p class="card-text">
+                            Since every sensor defaults to that address, and I want more than one sensor, I need to be able to write 
+                            addresses to my sensors. I can do this using Sparkfun's "setI2CAddress()" method. This way, I can create two
+                            SFEVL53L1X objects in my code, each with different addresses so that the sensors know who I'm requesting data 
+                            from, even if they are on the same data line.
+                        </p>
+                        <h2 class="card-title text-center mb-4">Sensor Placement</h2>
+                        <p class="card-text">
+                            Since every sensor defaults to that address, and I want more than one sensor, I need to be able to write 
+                            addresses to my sensors. I can do this using Sparkfun's "setI2CAddress()" method. This way, I can create two
+                            SFEVL53L1X objects in my code, each with different addresses so that the sensors know who I'm requesting data 
+                            from, even if they are on the same data line.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer-->
+        <footer class="py-5 bg-dark">
+            <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Kelvin Resch 2025</p></div>
+        </footer>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="js/scripts.js"></script>
+    </body>
+</html>
