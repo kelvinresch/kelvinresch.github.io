@@ -44,7 +44,7 @@
             </div>
         </header>
 
-<!-- Page Content-->
+        <!-- Page Content-->
         <section class="pt-4">
             <div class="container px-lg-5">
                 <!-- Single Bootstrap Card -->
@@ -52,23 +52,25 @@
                     <div class="card-body p-4 p-lg-5">
                         <!-- Card Content -->
                         <h1 class="card-title text-center mb-4">Prelab</h1>
-                        <h2 class="card-title text-center mb-4">Sensor I2C <Address></Address>ddresses</h2>
+                        <h2 class="card-title text-center mb-4">Sensor I2C Addresses</h2>
                         <p class="card-text">
                             This is a Time-of-Flight sensor. It works by emitting a light pulse and then measuring the time it takes
                             for that pulse to come back. In order to use this sensor, I need to hook it up to my Artemis microcontroller
                             over I2C. According to the Pololu site for the <a href="https://www.pololu.com/product/3415" target="_blank" 
-                            rel="noopener noreferrer">VL53L1X Time-of-Flight Sensor</a>, the sensor's 7-bit I2C address is 1010010b, which
-                            makes sense because there is a private int called "_i2cAddress = 0x52" in Sparkfun's library header file, which
-                            corresponds to that address.
+                            rel="noopener noreferrer">VL53L1X Time-of-Flight Sensor</a>, the sensor's 7-bit I2C address is 0101001b.
                         </p>
                         <p class="card-text">
-                            When I print the I2C address into serial monitor from the sensor, I get 82, which is 0x52 in hex and 1010010b in
-                            binary.
+                            When I print the I2C address into serial monitor from the sensor, I get 0x29 which is 0101001b in
+                            binary, so this makes sense.
                         </p>
                         <!-- Embedded Image -->
                         <div class="text-center mb-4">
                             <img src="assets/Lab3/Prelab_1.png" alt="Prelab_1" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
                         </div>
+
+
+
+                        
                         <h2 class="card-title text-center mb-4">2 ToF Sensors</h2>
                         <p class="card-text">
                             Since every sensor defaults to that address, and I want more than one sensor, I need to be able to write 
@@ -78,10 +80,86 @@
                         </p>
                         <h2 class="card-title text-center mb-4">Sensor Placement</h2>
                         <p class="card-text">
-                            Since every sensor defaults to that address, and I want more than one sensor, I need to be able to write 
-                            addresses to my sensors. I can do this using Sparkfun's "setI2CAddress()" method. This way, I can create two
-                            SFEVL53L1X objects in my code, each with different addresses so that the sensors know who I'm requesting data 
-                            from, even if they are on the same data line.
+                            Sensor placement is an important system-engineering-level part of this car's design. I need to make sure I'm
+                            building flexibility and functionality into my system so that it meets my design requirements. The main two goals
+                            are to make the car to tricks and map out a room. For the tricks, I will want ToF sensors on the front and back
+                            since my car will flip over, and for the mapping, I will want ToF sensors on the front and side so that I can
+                            follow along the wall of the room. Since I'm doing tricks first, I'll put my sensors on the front and back
+                            first. I'll use the longer Qwiic connector wires so that I have more maneuverability.
+                        </p>
+                        <p class="card-text">
+                            Putting sensors on the front and back means that I'll have poor sensing while I turn, but this should be okay for
+                            flips. If my design requirements become clearer closer to the trick portion of this lab and it turns out that I 
+                            want my ToF sensors in a different configuration, I'll move them.
+                        </p>
+                        <h2 class="card-title text-center mb-4">Schematic</h2>
+                        <p class="card-text">
+                            Here's a schematic of my car's data acquisition system. It uses the I2C multiport to connect multiple sensors to
+                            the Artemis at the same time. If I didn't have this multiport system, then I would just daisy-chain the sensors
+                            together, which is how I2C was designed to be used, but this is a more convenient system.
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab3/Prelab_3.png" alt="Prelab_3" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Page Content-->
+        <section class="pt-4">
+            <div class="container px-lg-5">
+                <!-- Single Bootstrap Card -->
+                <div class="card bg-light border-0">
+                    <div class="card-body p-4 p-lg-5">
+                        <!-- Card Content -->
+                        <h1 class="card-title text-center mb-4">Lab 3</h1>
+                        <h2 class="card-title text-center mb-4">ToF Sensor Connection</h2>
+                        <p class="card-text">
+                            This is what my setup looks like for a ToF sensor and the multiport. On the other two multiport headers
+                            I can attach my other ToF sensor and my IMU. The blue wire connects to SDA and the yellow wire connects
+                            to SCL.
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab3/Lab3_1.jpg" alt="Lab3_1" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <h2 class="card-title text-center mb-4">Artemis Scanning for I2C</h2>
+                        <p class="card-text">
+                            I can use getI2CAddress() to retrieve the ToF sensor's I2C address. It's consistent with the address on <a href=
+                            "https://www.pololu.com/product/3415" target="_blank" rel="noopener noreferrer">Pololu's Website</a>, and
+                            the header file of Sparkfun's Arduino library header file. When I scan for I2C addresses, I get the address
+                            0d82 or 0x52. 
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab3/Prelab_1.png" alt="Prelab_1" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            According to ST's datasheet and Pololu's technical documentation, this is the default I2C address for this sensor.
+                            If I want to use more than one sensor on the same I2C network, then I need to set the address of one of my
+                            sensors to something else. To do so, I need to disable one sensor, set the I2C address of the other one over the
+                            I2C line, and then enable the other sensor. This way, one of them will be left untouched, and the other one will
+                            have the new address, allowing me to use both of them on the same network. 
+                        </p>
+                        <h2 class="card-title text-center mb-4">Sensor Data</h2>
+                        <p class="card-text">
+                            Using the I2C protocol, I can retrieve data from the sensor. I can also use getDistanceMode() to read the 
+                            distance mode that's default with Adafruit's library. According to the header file, 2 corresponds to
+                            "long distance mode", so I can measure up to 4m with this sensor right now, although my error is a little
+                            higher than it could be. The tradeoff between the different modes is between maximum distance and 
+                            accuracy, so for fine sensing purposes, short-distance mode would be better. This would be for like the
+                            side sensor of the car while it maps the room. The long-distance sensor would be better for high-speed
+                            navigation like when it's doing stunts.
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab3/Lab3_2.png" alt="Lab3_2" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <h2 class="card-title text-center mb-4">Two ToF Sensors</h2>
+                        <p class="card-text">
+                            
                         </p>
                     </div>
                 </div>
