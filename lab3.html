@@ -298,8 +298,69 @@
                         </div>
                         <p class="card-text">
                             The idea is that I should see two sinusoidal-ish waves from each sensor in isolation, and the sum of the two
-                            sensors should yield a constant value which equals the width of the hallway (2250 millimeters).
+                            sensors should yield a constant value which equals the width of the hallway (2250 millimeters). Here is the data:
                         </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab3/Lab3_15.png" alt="Lab3_15" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            As you can see, the two sensors move back and forth, and the sum hovers just shy of 2250 mm. 
+                        </p>
+                        <h2 class="card-title text-center mb-4">Discussion on Speed and Limiting Factor</h2>
+                        <p class="card-text">
+                            I mentioned before that my original attempts at collecting data from both sensors was really slow, and I sped
+                            it up by asynchronously gathering data and reducing the time budget + intermeasurement period. Asynchronously
+                            gathering data is important for faster data collection, but it's also crucial so that I can do Kalman filter and
+                            control calculations later on. 
+                        </p>
+                        <p class="card-text">
+                            To test my timing, I printed the time in milliseconds every time the main while loop ran, and then printed with
+                            a new line each time new data was recorded. Here are the results:
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab3/Lab3_16.png" alt="Lab3_16" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            The first thing to note is that the first time recorded is 0ms, indicating that data collection has just begun.
+                            Also, sensor 0 records once, then sensor 1 records three times, and then sensor 0 records twice. This is because
+                            the sensors record asynchronously. I posted this earlier, but here's the code that allows me to record data in
+                            parallel:
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab3/Lab3_11.png" alt="Lab3_11" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            The full loop usually executes in 2 ms, but it can sometimes take up to 7 ms. If this becomes an issue in the future,
+                            then I'll go line-by-line and check what's taking so long on the MCU. Also, when data is ready, the code takes longer
+                            to execute. This makes sense because there are just more instructions, but I'm guessing clearInterrupt() and 
+                            stopRanging() take the longest because they are probably blocking while writing to the I2C bus. There are also the
+                            print statements slowing things down as well.
+                        </p>
+                        <p class="card-text">
+                            The main thing that's limiting my sampling rate is definitely just waiting on checkForDataReady(). This 
+                            is controlled by the sensor's time budget and intermeasurement period. I'm currently at 20 ms for this.
+                            I tried bringing it down to 15 ms, but that didn't work.
+                        </p>
+                        <h2 class="card-title text-center mb-4">Collecting IMU and ToF Data</h2>
+                        <p class="card-text">
+                            I added the program from my IMU code to my ToF code so that I'm collecting both at the same time. Here is the 
+                            IMU data that I collected:
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab3/Lab3_17.png" alt="Lab3_17" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            And here is the ToF sensor data that I collected from both sensors:
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab3/Lab3_18.png" alt="Lab3_18" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            Finally, here are my three sensors initializing one after another:
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab3/Lab3_19.png" alt="Lab3_19" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
                     </div>
                 </div>
             </div>
