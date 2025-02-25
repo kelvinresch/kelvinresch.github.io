@@ -245,6 +245,61 @@
                             of time elapse between each reading. The lags last between 150-750 ms. They also seem quantized at 150, 250,
                             350, 450... ms, which is weird to me. This could cause control issues in the future.
                         </p>
+                        <h2 class="card-title text-center mb-4">Two ToF Sensors</h2>
+                        <p class="card-text">
+                            This one was kind of tough because I had to experiment with a bunch of different ways to sample the data. I
+                            originally tried sampling whenever both sensors were ready, but this slowed down my sampling rate A TON. 
+                            So, I tried sampling each sensor asynchronously, and that improved my system, but for some reason I was getting
+                            100-200 ms between each sample, with I found unusable. I'll get into the details later of how I solved this,
+                            but for now, here is how I asynchronously sampled both sensors:
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab3/Lab3_11.png" alt="Lab3_11" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            Using if statements allowed me to check if my sensors were ready without hanging on a while loop, which
+                            would severely slow down my sampling rate.
+                        </p>
+                        <p class="card-text">
+                            Also, here is the output of my initialization that shows me that the sensors are both initializing correctly
+                            with different addresses.
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab3/Lab3_9.png" alt="Lab3_9" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <h3 class="card-title text-center mb-4">How I Increased Data Rate</h3>
+                        <p class="card-text">
+                            As mentioned before, my sampling period was around 100-200 ms, with spikes up to 700 ms, which is terrible.
+                            I noticed that the sampling periods were quantized into multiple of 100 ms, so I assumed something was 
+                            artificially slowing down my sensors. After looking into the source code of the library, I found that 
+                            the sampling period is determined by the "intermeasurement period" and "timing budget". After changing these
+                            from 100 ms to 20 ms (I think I can go down to 15 ms as well), I got *much* faster sampling rates. Here is
+                            a histogram of the new sampling periods of my sensor:
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab3/Lab3_10.png" alt="Lab3_10" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            I'm getting about 30 Hz sampling from one ToF sensor, and I think it could be better. I'll do more testing later.
+                        </p>
+                        <h3 class="card-title text-center mb-4">Testing</h3>
+                        <p class="card-text">
+                            To test if both sensors were sampling correctly in parallel, I taped the two sensors on opposite sides of a box and
+                            walked back and forth between the walls of a hallway.
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab3/Lab3_12.jpg" alt="Lab3_12" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab3/Lab3_13.jpg" alt="Lab3_13" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab3/Lab3_14.jpg" alt="Lab3_14" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            The idea is that I should see two sinusoidal-ish waves from each sensor in isolation, and the sum of the two
+                            sensors should yield a constant value which equals the width of the hallway (2250 millimeters).
+                        </p>
                     </div>
                 </div>
             </div>
