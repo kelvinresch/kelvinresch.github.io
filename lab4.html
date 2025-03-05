@@ -122,7 +122,7 @@
                             <img src="assets/Lab4/Lab4_2.png" alt="4_2" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
                         </div>
                         <p class="card-text">
-                            If I probe the pin connected to MotorLeftForward, I should see a PWM signal with a 100/255 (~40%) duty cycle.
+                            If I probe the pin connected to BOUT1, I should see a PWM signal with a 100/255 (~40%) duty cycle.
                             That's what I see:
                         </p>
                         <!-- Embedded Image -->
@@ -146,7 +146,7 @@
                         </p>
                         <!-- Embedded Image -->
                         <div class="text-center mb-4">
-                            <img src="assets/Lab4/Lab4_4.jpg" alt="4_4" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                            <img src="assets/Lab4/Lab4_4.png" alt="4_4" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
                         </div>
                         <h2 class="card-title text-center mb-4">Lower PWM Limit</h2>
                         <p class="card-text">
@@ -248,6 +248,19 @@ int move(int throttle) {
                         <div class="ratio ratio-16x9 mb-4">
                             <iframe src="https://youtube.com/embed/62YTRlqGHx8" title="YouTube video" allowfullscreen></iframe>
                         </div>
+                        <p class="card-text">
+                            I can also make the car turn a little by changing around the PWM values on the left and right. 
+                            In the future, I'll add an argument to my move() function so that it includes a turning term.
+                        </p>
+                        <!-- Embedded Video -->
+                        <div class="ratio ratio-16x9 mb-4">
+                            <iframe src="https://youtube.com/embed/oBdbmjpUkC0" title="YouTube video" allowfullscreen></iframe>
+                        </div>
+                        <p class="card-text">
+                            At this point, I can control my car's wheels to make it drive in a straight line. Separately, I can
+                            also collect data from my IMU and ToF sensors and report that data to my PC. I'm looking forward to 
+                            integrating both systems together to make the robot do some cool stuff.
+                        </p>
                     </div>
                 </div>
             </div>
