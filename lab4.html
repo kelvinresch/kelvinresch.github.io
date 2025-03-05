@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Fast Robots Spring 2025 - Kelvin Resch</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="assets/robot.ico" />
+        <!-- Bootstrap icons-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="css/styles.css" rel="stylesheet" />
+        <!-- Prism.js CSS for Syntax Highlighting -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    </head>
+    <body>
+        <!-- Prism.js JavaScript -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.js"></script>
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>  -->
+        <!-- Responsive navbar-->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-danger">
+            <div class="container px-lg-5">
+                <a class="navbar-brand" href="https://kelvinresch.github.io">Lab 3</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="https://kelvinresch.github.io">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="https://www.linkedin.com/in/kelvin-resch">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Header-->
+        <header class="py-5">
+            <div class="container px-lg-5">
+                <div class="p-4 p-lg-5 bg-light rounded-3 text-center">
+                    <div class="m-4 m-lg-5">
+                        <h1 class="display-5 fw-bold">Lab 3</h1>
+                        <p class="fs-4">Time of Flight Sensors</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Content-->
+        <section class="pt-4">
+            <div class="container px-lg-5">
+                <!-- Single Bootstrap Card -->
+                <div class="card bg-light border-0">
+                    <div class="card-body p-4 p-lg-5">
+                        <!-- Card Content -->
+                        <h1 class="card-title text-center mb-4">Prelab</h1>
+                        <h2 class="card-title text-center mb-4">Sensor I2C Addresses</h2>
+                        <p class="card-text">
+                            This is a Time-of-Flight sensor. It works by emitting a light pulse and then measuring the time it takes
+                            for that pulse to come back. In order to use this sensor, I need to hook it up to my Artemis microcontroller
+                            over I2C. According to the Pololu site for the <a href="https://www.pololu.com/product/3415" target="_blank" 
+                            rel="noopener noreferrer">VL53L1X Time-of-Flight Sensor</a>, the sensor's 7-bit I2C address is 0101001b.
+                        </p>
+                        <p class="card-text">
+                            When I print the I2C address into serial monitor from the sensor, I get 0x29 which is 0101001b in
+                            binary, so this makes sense.
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab3/Prelab_1.png" alt="Prelab_1" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+
+
+
+                        
+                        <h2 class="card-title text-center mb-4">2 ToF Sensors</h2>
+                        <p class="card-text">
+                            Since every sensor defaults to that address, and I want more than one sensor, I need to be able to write 
+                            addresses to my sensors. I can do this using Sparkfun's "setI2CAddress()" method. This way, I can create two
+                            SFEVL53L1X objects in my code, each with different addresses so that the sensors know who I'm requesting data 
+                            from, even if they are on the same data line.
+                        </p>
+                        <h2 class="card-title text-center mb-4">Sensor Placement</h2>
+                        <p class="card-text">
+                            Sensor placement is an important system-engineering-level part of this car's design. I need to make sure I'm
+                            building flexibility and functionality into my system so that it meets my design requirements. The main two goals
+                            are to make the car to tricks and map out a room. For the tricks, I will want ToF sensors on the front and back
+                            since my car will flip over, and for the mapping, I will want ToF sensors on the front and side so that I can
+                            follow along the wall of the room. Since I'm doing tricks first, I'll put my sensors on the front and back
+                            first. I'll use the longer Qwiic connector wires so that I have more maneuverability.
+                        </p>
+                        <p class="card-text">
+                            Putting sensors on the front and back means that I'll have poor sensing while I turn, but this should be okay for
+                            flips. If my design requirements become clearer closer to the trick portion of this lab and it turns out that I 
+                            want my ToF sensors in a different configuration, I'll move them.
+                        </p>
+                        <h2 class="card-title text-center mb-4">Schematic</h2>
+                        <p class="card-text">
+                            Here's a schematic of my car's data acquisition system. It uses the I2C multiport to connect multiple sensors to
+                            the Artemis at the same time. If I didn't have this multiport system, then I would just daisy-chain the sensors
+                            together, which is how I2C was designed to be used, but this is a more convenient system.
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab3/Prelab_3.png" alt="Prelab_3" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Page Content-->
+        <section class="pt-4">
+            <div class="container px-lg-5">
+                <!-- Single Bootstrap Card -->
+                <div class="card bg-light border-0">
+                    <div class="card-body p-4 p-lg-5">
+                        <!-- Card Content -->
+                        <h1 class="card-title text-center mb-4">Lab 3</h1>
+                        <h2 class="card-title text-center mb-4">ToF Sensor Connection</h2>
+                        <p class="card-text">
+                            This is what my setup looks like for a ToF sensor and the multiport. On the other two multiport headers
+                            I can attach my other ToF sensor and my IMU. The blue wire connects to SDA and the yellow wire connects
+                            to SCL.
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab3/Lab3_1.jpg" alt="Lab3_1" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <h2 class="card-title text-center mb-4">Artemis Scanning for I2C</h2>
+                        <p class="card-text">
+                            I can use getI2CAddress() to retrieve the ToF sensor's I2C address. It's consistent with the address on <a href=
+                            "https://www.pololu.com/product/3415" target="_blank" rel="noopener noreferrer">Pololu's Website</a>, and
+                            the header file of Sparkfun's Arduino library header file. When I scan for I2C addresses, I get the address
+                            0d82 or 0x52. 
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab3/Prelab_1.png" alt="Prelab_1" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            According to ST's datasheet and Pololu's technical documentation, this is the default I2C address for this sensor.
+                            If I want to use more than one sensor on the same I2C network, then I need to set the address of one of my
+                            sensors to something else. To do so, I need to disable one sensor, set the I2C address of the other one over the
+                            I2C line, and then enable the other sensor. This way, one of them will be left untouched, and the other one will
+                            have the new address, allowing me to use both of them on the same network. 
+                        </p>
+                        <h2 class="card-title text-center mb-4">Sensor Data</h2>
+                        <p class="card-text">
+                            Using the I2C protocol, I can retrieve data from the sensor. I can also use getDistanceMode() to read the 
+                            distance mode that's default with Adafruit's library. According to the header file, 2 corresponds to
+                            "long distance mode", so I can measure up to 4m with this sensor right now, although my error is a little
+                            higher than it could be. The tradeoff between the different modes is between maximum distance and 
+                            accuracy, so for fine sensing purposes, short-distance mode would be better. This would be for like the
+                            side sensor of the car while it maps the room. The long-distance sensor would be better for high-speed
+                            navigation like when it's doing stunts.
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab3/Lab3_2.png" alt="Lab3_2" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <h2 class="card-title text-center mb-4">Testing Sensor Reliability</h2>
+                        <p class="card-text">
+                            To test the sensor, I placed it along a measuring tape, and moved an obstacle in 100 mm increments from 
+                            100 mm to 2500 mm. Then, I took the average and variance of those measurements to collect my
+                            reliability data for the ToF sensor. This test was conducted on long-distance mode.
+                        </p>
+                        <p class="card-text">
+                            Here is my test setup:
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab3/Test Setup.jpg" alt="Test setup" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            The cardboard board was moved in 100 mm increments. Here is the raw data:
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab3/Lab3_3.png" alt="Lab3_3" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            At each plateau that you see, I took the average value and variance:
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab3/Lab3_4.png" alt="Lab3_4" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            Based on the graph, the sensor is fairly accurate up until around 1.5 meters. It undershoots a tiny bit,
+                            but this undershoot is fairly constant. Also, the variance in the measurement is very low. Past 1.5
+                            meters, the sensor undershoots more, and the variance of the measurement increases. You can see this
+                            in the raw data as noise after the ~350th sample.
+                        </p>
+                        <h3 class="card-title text-center mb-4">Range</h3>
+                        <p class="card-text">
+                            Although the sensor is supposed to work up until 4 meters in long-distance mode, I was only able to get
+                            up to about 2.5 meters before the sensor's noise rendered it unusable. According to the 
+                            <a href="https://www.pololu.com/product/3415" target="_blank" rel="noopener noreferrer">
+                            Pololu Website</a>, the sensor doesn't work that well in long-distance mode with background light,
+                            so I believe this was the cause. The hallway that I was testing in had windows and artificial lighting,
+                            which probably added noise to the sensor's readings.
+                        </p>
+                        <h3 class="card-title text-center mb-4">Accuracy</h3>
+                        <p class="card-text">
+                            As mentioned before, the cardboard material, the sensor has a tendency to undershoot its readings,
+                            especially at longer range. Here is a plot of sensor error as a function of distance in millimeteres.
+                            Notice how the error scales linearly with distance, causing the error measurement to remain fairly
+                            stable. At close ranges, the error jumps up significantly. This is possibly due to the fact that 
+                            this data was taken in long-distance mode. Perhaps short-distance mode has less error.
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab3/Lab3_5.png" alt="Lab3_5" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            Here is a plot of the same test with short-distance mode:
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab3/Lab3_6.png" alt="Lab3_6" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            And the error as a function of distance:
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab3/Lab3_7.png" alt="Lab3_7" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            In long-distance mode, the error spikes in the negative direction at around 300 mm. In short-distance
+                            mode, the error spikes around 100 mm, so short-range mode definitely retains good measurement for longer.
+                            I think for the wall-stop thing I'm going to use short-range mode for the high data quality. 
+                        </p>
+                        <h3 class="card-title text-center mb-4">Repeatability</h3>
+                        <p class="card-text">
+                            The variance for the ToF sensor is fairly low when the measurement is not at the far limit of the 
+                            sensor's ability, so usually the sample-to-sample repeatability for each measurement is quite good.
+                            As for the sensor's repeatability between tests, the datasheet said that the sensor works better at
+                            lower light levels, so the sensor's error is probably also a function of how much background light
+                            there is. I'm guessing the background light acts as a noise floor for the sensor.
+                        </p>
+                        <h3 class="card-title text-center mb-4">Ranging Time</h3>
+                        <p class="card-text">
+                            I know that the sensor gives me data pretty slowly, but I'm not sure about the variance. Here's a 
+                            plot of the time between sensor readings:
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab3/Lab3_8.png" alt="Lab3_8" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            According to the data, 89% of the samples are 50-60 ms apart, and 11% of the samples have a large amount 
+                            of time elapse between each reading. The lags last between 150-750 ms. They also seem quantized at 150, 250,
+                            350, 450... ms, which is weird to me. This could cause control issues in the future.
+                        </p>
+                        <h2 class="card-title text-center mb-4">Two ToF Sensors</h2>
+                        <p class="card-text">
+                            This one was kind of tough because I had to experiment with a bunch of different ways to sample the data. I
+                            originally tried sampling whenever both sensors were ready, but this slowed down my sampling rate A TON. 
+                            So, I tried sampling each sensor asynchronously, and that improved my system, but for some reason I was getting
+                            100-200 ms between each sample, with I found unusable. I'll get into the details later of how I solved this,
+                            but for now, here is how I asynchronously sampled both sensors:
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab3/Lab3_11.png" alt="Lab3_11" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            Using if statements allowed me to check if my sensors were ready without hanging on a while loop, which
+                            would severely slow down my sampling rate.
+                        </p>
+                        <p class="card-text">
+                            Also, here is the output of my initialization that shows me that the sensors are both initializing correctly
+                            with different addresses.
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab3/Lab3_9.png" alt="Lab3_9" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <h3 class="card-title text-center mb-4">How I Increased Data Rate</h3>
+                        <p class="card-text">
+                            As mentioned before, my sampling period was around 100-200 ms, with spikes up to 700 ms, which is terrible.
+                            I noticed that the sampling periods were quantized into multiple of 100 ms, so I assumed something was 
+                            artificially slowing down my sensors. After looking into the source code of the library, I found that 
+                            the sampling period is determined by the "intermeasurement period" and "timing budget". After changing these
+                            from 100 ms to 20 ms (I think I can go down to 15 ms as well), I got *much* faster sampling rates. Here is
+                            a histogram of the new sampling periods of my sensor:
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab3/Lab3_10.png" alt="Lab3_10" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            I'm getting about 30 Hz sampling from one ToF sensor, and I think it could be better. I'll do more testing later.
+                        </p>
+                        <h3 class="card-title text-center mb-4">Testing</h3>
+                        <p class="card-text">
+                            To test if both sensors were sampling correctly in parallel, I taped the two sensors on opposite sides of a box and
+                            walked back and forth between the walls of a hallway.
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab3/Lab3_12.jpg" alt="Lab3_12" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab3/Lab3_13.jpg" alt="Lab3_13" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab3/Lab3_14.jpg" alt="Lab3_14" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            The idea is that I should see two sinusoidal-ish waves from each sensor in isolation, and the sum of the two
+                            sensors should yield a constant value which equals the width of the hallway (2250 millimeters). Here is the data:
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab3/Lab3_15.png" alt="Lab3_15" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            As you can see, the two sensors move back and forth, and the sum hovers just shy of 2250 mm. 
+                        </p>
+                        <h2 class="card-title text-center mb-4">Discussion on Speed and Limiting Factor</h2>
+                        <p class="card-text">
+                            I mentioned before that my original attempts at collecting data from both sensors was really slow, and I sped
+                            it up by asynchronously gathering data and reducing the time budget + intermeasurement period. Asynchronously
+                            gathering data is important for faster data collection, but it's also crucial so that I can do Kalman filter and
+                            control calculations later on. 
+                        </p>
+                        <p class="card-text">
+                            To test my timing, I printed the time in milliseconds every time the main while loop ran, and then printed with
+                            a new line each time new data was recorded. Here are the results:
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab3/Lab3_16.png" alt="Lab3_16" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            The first thing to note is that the first time recorded is 0ms, indicating that data collection has just begun.
+                            Also, sensor 0 records once, then sensor 1 records three times, and then sensor 0 records twice. This is because
+                            the sensors record asynchronously. I posted this earlier, but here's the code that allows me to record data in
+                            parallel:
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab3/Lab3_11.png" alt="Lab3_11" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            The full loop usually executes in 2 ms, but it can sometimes take up to 7 ms. If this becomes an issue in the future,
+                            then I'll go line-by-line and check what's taking so long on the MCU. Also, when data is ready, the code takes longer
+                            to execute. This makes sense because there are just more instructions, but I'm guessing clearInterrupt() and 
+                            stopRanging() take the longest because they are probably blocking while writing to the I2C bus. There are also the
+                            print statements slowing things down as well.
+                        </p>
+                        <p class="card-text">
+                            The main thing that's limiting my sampling rate is definitely just waiting on checkForDataReady(). This 
+                            is controlled by the sensor's time budget and intermeasurement period. I'm currently at 20 ms for this.
+                            I tried bringing it down to 15 ms, but that didn't work.
+                        </p>
+                        <h2 class="card-title text-center mb-4">Collecting IMU and ToF Data</h2>
+                        <p class="card-text">
+                            I added the program from my IMU code to my ToF code so that I'm collecting both at the same time. Here is the 
+                            IMU data that I collected:
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab3/Lab3_17.png" alt="Lab3_17" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            And here is the ToF sensor data that I collected from both sensors:
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab3/Lab3_18.png" alt="Lab3_18" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            Finally, here are my three sensors initializing one after another:
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab3/Lab3_19.png" alt="Lab3_19" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer-->
+        <footer class="py-5 bg-dark">
+            <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Kelvin Resch 2025</p></div>
+        </footer>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="js/scripts.js"></script>
+    </body>
+</html>
