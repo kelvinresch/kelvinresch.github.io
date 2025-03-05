@@ -22,7 +22,7 @@
         <!-- Responsive navbar-->
         <nav class="navbar navbar-expand-lg navbar-dark bg-danger">
             <div class="container px-lg-5">
-                <a class="navbar-brand" href="https://kelvinresch.github.io">Lab 3</a>
+                <a class="navbar-brand" href="https://kelvinresch.github.io">Lab 4</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
@@ -37,8 +37,8 @@
             <div class="container px-lg-5">
                 <div class="p-4 p-lg-5 bg-light rounded-3 text-center">
                     <div class="m-4 m-lg-5">
-                        <h1 class="display-5 fw-bold">Lab 3</h1>
-                        <p class="fs-4">Time of Flight Sensors</p>
+                        <h1 class="display-5 fw-bold">Lab 4</h1>
+                        <p class="fs-4">Motors and Open Loop Control</p>
                     </div>
                 </div>
             </div>
@@ -52,56 +52,40 @@
                     <div class="card-body p-4 p-lg-5">
                         <!-- Card Content -->
                         <h1 class="card-title text-center mb-4">Prelab</h1>
-                        <h2 class="card-title text-center mb-4">Sensor I2C Addresses</h2>
+                        <h2 class="card-title text-center mb-4">Artemis Pinout</h2>
                         <p class="card-text">
-                            This is a Time-of-Flight sensor. It works by emitting a light pulse and then measuring the time it takes
-                            for that pulse to come back. In order to use this sensor, I need to hook it up to my Artemis microcontroller
-                            over I2C. According to the Pololu site for the <a href="https://www.pololu.com/product/3415" target="_blank" 
-                            rel="noopener noreferrer">VL53L1X Time-of-Flight Sensor</a>, the sensor's 7-bit I2C address is 0101001b.
+                            The two DC motors that control the left and right sides of the car are controlled by PWM, so 
+                            I needed to make sure that the pins that go to the motor controllers are all PWM-capable. The
+                            PWM capable pins on the Apollo3 microcontroller are the pins with the tilde (~) sign. I used
+                            pins 9, 11, 12, and 13. Two of these pins went to each motor controller, as well as a ground 
+                            line for each.
                         </p>
+                        <h2 class="card-title text-center mb-4">Separate Batteries</h2>
                         <p class="card-text">
-                            When I print the I2C address into serial monitor from the sensor, I get 0x29 which is 0101001b in
-                            binary, so this makes sense.
+                            Batteries have output impedance that can cause drops in voltage when a lot of current is 
+                            demanded from them. Since we are driving motors, there will be a large load on the battery
+                            hooked up to them, and if the whole system is powered by one battery, then the microcontroller
+                            and sensors will all see voltage line fluctuations caused by the motor. In addition, the motor's
+                            physical commutator, inductance, and backEMF sends a lot of noise back up the power line, and 
+                            this would also negatively affect everything else, so using separate batteries ensures all the 
+                            messy signals are isolated to one part of the circuit, and the sensors and sensitive electronics
+                            are powered by a different, cleaner voltage line. 
+                        </p>
+                        <h2 class="card-title text-center mb-4">Intended Diagram</h2>
+                        <p class="card-text">
+                            Here's a diagram of my car's system, including motors, motor controllers, Artemis (with pinout),
+                            and batteries. You can get the schematic as a pdf <a href="https://kelvinresch.github.io/assets
+                            /Lab4/Schematic.pdf" target="_blank" rel="noopener noreferrer">here</a>.
                         </p>
                         <!-- Embedded Image -->
                         <div class="text-center mb-4">
-                            <img src="assets/Lab3/Prelab_1.png" alt="Prelab_1" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                            <img src="assets/Lab4/Diagram.png" alt="Diagram" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
                         </div>
 
 
 
                         
-                        <h2 class="card-title text-center mb-4">2 ToF Sensors</h2>
-                        <p class="card-text">
-                            Since every sensor defaults to that address, and I want more than one sensor, I need to be able to write 
-                            addresses to my sensors. I can do this using Sparkfun's "setI2CAddress()" method. This way, I can create two
-                            SFEVL53L1X objects in my code, each with different addresses so that the sensors know who I'm requesting data 
-                            from, even if they are on the same data line.
-                        </p>
-                        <h2 class="card-title text-center mb-4">Sensor Placement</h2>
-                        <p class="card-text">
-                            Sensor placement is an important system-engineering-level part of this car's design. I need to make sure I'm
-                            building flexibility and functionality into my system so that it meets my design requirements. The main two goals
-                            are to make the car to tricks and map out a room. For the tricks, I will want ToF sensors on the front and back
-                            since my car will flip over, and for the mapping, I will want ToF sensors on the front and side so that I can
-                            follow along the wall of the room. Since I'm doing tricks first, I'll put my sensors on the front and back
-                            first. I'll use the longer Qwiic connector wires so that I have more maneuverability.
-                        </p>
-                        <p class="card-text">
-                            Putting sensors on the front and back means that I'll have poor sensing while I turn, but this should be okay for
-                            flips. If my design requirements become clearer closer to the trick portion of this lab and it turns out that I 
-                            want my ToF sensors in a different configuration, I'll move them.
-                        </p>
-                        <h2 class="card-title text-center mb-4">Schematic</h2>
-                        <p class="card-text">
-                            Here's a schematic of my car's data acquisition system. It uses the I2C multiport to connect multiple sensors to
-                            the Artemis at the same time. If I didn't have this multiport system, then I would just daisy-chain the sensors
-                            together, which is how I2C was designed to be used, but this is a more convenient system.
-                        </p>
-                        <!-- Embedded Image -->
-                        <div class="text-center mb-4">
-                            <img src="assets/Lab3/Prelab_3.png" alt="Prelab_3" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
-                        </div>
+                        
                     </div>
                 </div>
             </div>
