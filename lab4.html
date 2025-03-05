@@ -82,11 +82,6 @@
                         <div class="text-center mb-4">
                             <img src="assets/Lab4/Diagram.png" alt="Diagram" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
                         </div>
-
-
-
-                        
-                        
                     </div>
                 </div>
             </div>
@@ -99,252 +94,159 @@
                 <div class="card bg-light border-0">
                     <div class="card-body p-4 p-lg-5">
                         <!-- Card Content -->
-                        <h1 class="card-title text-center mb-4">Lab 3</h1>
-                        <h2 class="card-title text-center mb-4">ToF Sensor Connection</h2>
+                        <h1 class="card-title text-center mb-4">Lab 4</h1>
+                        <h2 class="card-title text-center mb-4">Benchtop Testing</h2>
                         <p class="card-text">
-                            This is what my setup looks like for a ToF sensor and the multiport. On the other two multiport headers
-                            I can attach my other ToF sensor and my IMU. The blue wire connects to SDA and the yellow wire connects
-                            to SCL.
+                            I connected my power supply to the battery input, my 650 mAh battery to the Artemis, and oscilloscope
+                            probe to the motor winding, and set the power supply current compliance to 2 A. Here is what my set
+                            up looked like:
                         </p>
                         <!-- Embedded Image -->
                         <div class="text-center mb-4">
-                            <img src="assets/Lab3/Lab3_1.jpg" alt="Lab3_1" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                            <img src="assets/Lab4/Lab4_1.jpg" alt="Lab4_1" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
                         </div>
-                        <h2 class="card-title text-center mb-4">Artemis Scanning for I2C</h2>
+                        <h2 class="card-title text-center mb-4">Power Supply Setting</h2>
                         <p class="card-text">
-                            I can use getI2CAddress() to retrieve the ToF sensor's I2C address. It's consistent with the address on <a href=
-                            "https://www.pololu.com/product/3415" target="_blank" rel="noopener noreferrer">Pololu's Website</a>, and
-                            the header file of Sparkfun's Arduino library header file. When I scan for I2C addresses, I get the address
-                            0d82 or 0x52. 
+                            Since the battery voltage was at 3.7 V, that's what I set my power supply voltage to. For current compliance,
+                            I originally set it to 1 A, but I was hitting the limit and the power supply was throttling my voltage, so 
+                            increasing the ceiling to 2 A solved this issue.
+                        </p>
+                        <h2 class="card-title text-center mb-4">Testing with analogWrite()</h2>
+                        <p class="card-text">
+                            As mentioned before, the signals that control the motor are pulse-width modulated, and it's important to check
+                            that the correct signals are being sent. Also, it's important to check that there is not capacitive or inductive
+                            coupling happening with my wires. Here's the code that ran in my test:
                         </p>
                         <!-- Embedded Image -->
                         <div class="text-center mb-4">
-                            <img src="assets/Lab3/Prelab_1.png" alt="Prelab_1" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                            <img src="assets/Lab4/Lab4_2.png" alt="4_2" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
                         </div>
                         <p class="card-text">
-                            According to ST's datasheet and Pololu's technical documentation, this is the default I2C address for this sensor.
-                            If I want to use more than one sensor on the same I2C network, then I need to set the address of one of my
-                            sensors to something else. To do so, I need to disable one sensor, set the I2C address of the other one over the
-                            I2C line, and then enable the other sensor. This way, one of them will be left untouched, and the other one will
-                            have the new address, allowing me to use both of them on the same network. 
-                        </p>
-                        <h2 class="card-title text-center mb-4">Sensor Data</h2>
-                        <p class="card-text">
-                            Using the I2C protocol, I can retrieve data from the sensor. I can also use getDistanceMode() to read the 
-                            distance mode that's default with Adafruit's library. According to the header file, 2 corresponds to
-                            "long distance mode", so I can measure up to 4m with this sensor right now, although my error is a little
-                            higher than it could be. The tradeoff between the different modes is between maximum distance and 
-                            accuracy, so for fine sensing purposes, short-distance mode would be better. This would be for like the
-                            side sensor of the car while it maps the room. The long-distance sensor would be better for high-speed
-                            navigation like when it's doing stunts.
+                            If I probe the pin connected to MotorLeftForward, I should see a PWM signal with a 100/255 (~40%) duty cycle.
+                            That's what I see:
                         </p>
                         <!-- Embedded Image -->
                         <div class="text-center mb-4">
-                            <img src="assets/Lab3/Lab3_2.png" alt="Lab3_2" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                            <img src="assets/Lab4/Lab4_3.jpg" alt="4_3" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
                         </div>
-                        <h2 class="card-title text-center mb-4">Testing Sensor Reliability</h2>
+                        <h2 class="card-title text-center mb-4">Running the Car</h2>
                         <p class="card-text">
-                            To test the sensor, I placed it along a measuring tape, and moved an obstacle in 100 mm increments from 
-                            100 mm to 2500 mm. Then, I took the average and variance of those measurements to collect my
-                            reliability data for the ToF sensor. This test was conducted on long-distance mode.
+                            If I power the motor controllers with a battery and hook it up to the motors, it makes the wheels turn:
                         </p>
-                        <p class="card-text">
-                            Here is my test setup:
-                        </p>
-                        <div class="text-center mb-4">
-                            <img src="assets/Lab3/Test Setup.jpg" alt="Test setup" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        <!-- Embedded Video -->
+                        <div class="ratio ratio-16x9 mb-4">
+                            <iframe src="https://youtube.com/embed/7ShQGhhPYI4" title="YouTube video" allowfullscreen></iframe>
                         </div>
+                        <h2 class="card-title text-center mb-4">Car Integration</h2>
                         <p class="card-text">
-                            The cardboard board was moved in 100 mm increments. Here is the raw data:
+                            There is a lot to mount on the car, including signal and power components. To minimize EMI and coupling,
+                            I kept loops as small as possible by twisting wires and keeping them short. Also for the sensors, I drilled
+                            holes in the car's frame and screwed them. This allows the ToF and IMU sensors to be fixed to the reference
+                            frame of the car without moving around at all.
                         </p>
+                        <!-- Embedded Image -->
                         <div class="text-center mb-4">
-                            <img src="assets/Lab3/Lab3_3.png" alt="Lab3_3" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                            <img src="assets/Lab4/Lab4_4.jpg" alt="4_4" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
                         </div>
+                        <h2 class="card-title text-center mb-4">Lower PWM Limit</h2>
                         <p class="card-text">
-                            At each plateau that you see, I took the average value and variance:
+                            If I send a 1% duty cycle to motors, they won't turn at all due to static friction. So, I need to surpass a 
+                            certain threshold in my duty cycle before the car starts moving at its minimum velocity. This changes depending
+                            on battery voltage, but that lower PWM threshold is around 31 and 45 for the right and left motors respectively.
                         </p>
+                        <h2 class="card-title text-center mb-4">Open Loop Calibration</h2>
+                        <p class="card-text">
+                            I had to find the lower PWM limit for each motor earlier due to static friction in each drivetrain. In
+                            addition to static friction, there is also moving friction, and it's different for each side of the car.
+                            So, I also had to add a scaling factor in addition to the offset, and by tuning these scaling factors,
+                            I could make my car drive straight in open-loop control.
+                        </p>
+                        <p class="card-text">
+                            I made a function that describes the PWM duty cycle as a function of the throttle with constants for 
+                            PWM offset and scaling. The function is:
+                        </p>
+                        <p class="card-text">
+                            PWM_duty_cycle = (throttle * ((throttle_scaler - throttle_offset) / 255) ) + throttle_offset
+                        </p>
+                        <p class="card-text">
+                            This makes PWM_duty_cycle a linear function that starts at the point (0, throttle_offset) and
+                            ends at (255, throttle_scaler). If you want full beans, throttle_scaler = 255. Here's the code:
+                        </p>
+                        <!-- Section: Arduino Code Snippet -->
+                        <pre><code class="language-clike">
+float throttleLeftOffset = 45;
+float throttleRightOffset = 31;
+float leftScaler = (255.0 - throttleLeftOffset) / 255.0;
+float rightScaler = (108.0 - throttleRightOffset) / 255.0;
+/*
+    * Throttle should be between -255 and 255.
+    * Returns 0 if this is true. If throttle is 
+    * out of range, move() will saturate and return
+    * -1
+    */
+int move(int throttle) {
+    int returnValue = 0;
+
+    // If the -255 < throttle < 255, 
+    // Saturate and return -1.
+    if (throttle > 255) {
+    throttle = 255;
+    returnValue = -1;
+    }
+    
+    if (throttle < -255) {
+    throttle = -255;
+    returnValue = -1;
+    }
+
+    if (throttle > 0) {
+    int throttleLeft = (throttle * leftScaler) + throttleLeftOffset;
+    int throttleRight = (throttle * rightScaler) + throttleRightOffset;
+    analogWrite(MotorLeftForward, throttleLeft);
+    analogWrite(MotorRightForward, throttleRight);
+    analogWrite(MotorLeftBackward, 0);
+    analogWrite(MotorRightBackward, 0);
+    } 
+    else if (throttle < 0) {
+    int throttleLeft = (-throttle * leftScaler) + throttleLeftOffset;
+    int throttleRight = (-throttle * rightScaler) + throttleRightOffset;
+    analogWrite(MotorLeftBackward, throttleLeft);
+    analogWrite(MotorRightBackward, throttleRight);
+    analogWrite(MotorLeftForward, 0);
+    analogWrite(MotorRightForward, 0);
+    } else {
+    analogWrite(MotorLeftBackward, 0);
+    analogWrite(MotorRightBackward, 0);
+    analogWrite(MotorLeftForward, 0);
+    analogWrite(MotorRightForward, 0);
+    }
+
+    return returnValue;
+}
+                        </code></pre>
+                        <p class="card-text">
+                            There is also some code to do saturation in case move() gets called with more that it can take.
+                            My right motor is much stronger than my left motor, so I scale my left motor from 255 down to 108.
+                            This is quite drastic, so I'm going to test at higher speeds later and see if I can get away with
+                            less scaling. If I can, then I'll do something more complex than a two-point calibration to map
+                            throttle to PWM duty cycle.
+                        </p>
+                        <h2 class="card-title text-center mb-4">Open Loop Video</h2>
+                        <p class="card-text">
+                            I set up a test with a straight strip of tape for 6 feet. Here's what the set up looked like:
+                        </p>
+                        <!-- Embedded Image -->
                         <div class="text-center mb-4">
-                            <img src="assets/Lab3/Lab3_4.png" alt="Lab3_4" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
-                        </div>
-                        <p class="card-text">
-                            Based on the graph, the sensor is fairly accurate up until around 1.5 meters. It undershoots a tiny bit,
-                            but this undershoot is fairly constant. Also, the variance in the measurement is very low. Past 1.5
-                            meters, the sensor undershoots more, and the variance of the measurement increases. You can see this
-                            in the raw data as noise after the ~350th sample.
-                        </p>
-                        <h3 class="card-title text-center mb-4">Range</h3>
-                        <p class="card-text">
-                            Although the sensor is supposed to work up until 4 meters in long-distance mode, I was only able to get
-                            up to about 2.5 meters before the sensor's noise rendered it unusable. According to the 
-                            <a href="https://www.pololu.com/product/3415" target="_blank" rel="noopener noreferrer">
-                            Pololu Website</a>, the sensor doesn't work that well in long-distance mode with background light,
-                            so I believe this was the cause. The hallway that I was testing in had windows and artificial lighting,
-                            which probably added noise to the sensor's readings.
-                        </p>
-                        <h3 class="card-title text-center mb-4">Accuracy</h3>
-                        <p class="card-text">
-                            As mentioned before, the cardboard material, the sensor has a tendency to undershoot its readings,
-                            especially at longer range. Here is a plot of sensor error as a function of distance in millimeteres.
-                            Notice how the error scales linearly with distance, causing the error measurement to remain fairly
-                            stable. At close ranges, the error jumps up significantly. This is possibly due to the fact that 
-                            this data was taken in long-distance mode. Perhaps short-distance mode has less error.
-                        </p>
-                        <div class="text-center mb-4">
-                            <img src="assets/Lab3/Lab3_5.png" alt="Lab3_5" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
-                        </div>
-                        <p class="card-text">
-                            Here is a plot of the same test with short-distance mode:
-                        </p>
-                        <div class="text-center mb-4">
-                            <img src="assets/Lab3/Lab3_6.png" alt="Lab3_6" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
-                        </div>
-                        <p class="card-text">
-                            And the error as a function of distance:
-                        </p>
-                        <div class="text-center mb-4">
-                            <img src="assets/Lab3/Lab3_7.png" alt="Lab3_7" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
-                        </div>
-                        <p class="card-text">
-                            In long-distance mode, the error spikes in the negative direction at around 300 mm. In short-distance
-                            mode, the error spikes around 100 mm, so short-range mode definitely retains good measurement for longer.
-                            I think for the wall-stop thing I'm going to use short-range mode for the high data quality. 
-                        </p>
-                        <h3 class="card-title text-center mb-4">Repeatability</h3>
-                        <p class="card-text">
-                            The variance for the ToF sensor is fairly low when the measurement is not at the far limit of the 
-                            sensor's ability, so usually the sample-to-sample repeatability for each measurement is quite good.
-                            As for the sensor's repeatability between tests, the datasheet said that the sensor works better at
-                            lower light levels, so the sensor's error is probably also a function of how much background light
-                            there is. I'm guessing the background light acts as a noise floor for the sensor.
-                        </p>
-                        <h3 class="card-title text-center mb-4">Ranging Time</h3>
-                        <p class="card-text">
-                            I know that the sensor gives me data pretty slowly, but I'm not sure about the variance. Here's a 
-                            plot of the time between sensor readings:
-                        </p>
-                        <div class="text-center mb-4">
-                            <img src="assets/Lab3/Lab3_8.png" alt="Lab3_8" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
-                        </div>
-                        <p class="card-text">
-                            According to the data, 89% of the samples are 50-60 ms apart, and 11% of the samples have a large amount 
-                            of time elapse between each reading. The lags last between 150-750 ms. They also seem quantized at 150, 250,
-                            350, 450... ms, which is weird to me. This could cause control issues in the future.
-                        </p>
-                        <h2 class="card-title text-center mb-4">Two ToF Sensors</h2>
-                        <p class="card-text">
-                            This one was kind of tough because I had to experiment with a bunch of different ways to sample the data. I
-                            originally tried sampling whenever both sensors were ready, but this slowed down my sampling rate A TON. 
-                            So, I tried sampling each sensor asynchronously, and that improved my system, but for some reason I was getting
-                            100-200 ms between each sample, with I found unusable. I'll get into the details later of how I solved this,
-                            but for now, here is how I asynchronously sampled both sensors:
-                        </p>
-                        <div class="text-center mb-4">
-                            <img src="assets/Lab3/Lab3_11.png" alt="Lab3_11" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
-                        </div>
-                        <p class="card-text">
-                            Using if statements allowed me to check if my sensors were ready without hanging on a while loop, which
-                            would severely slow down my sampling rate.
-                        </p>
-                        <p class="card-text">
-                            Also, here is the output of my initialization that shows me that the sensors are both initializing correctly
-                            with different addresses.
-                        </p>
-                        <div class="text-center mb-4">
-                            <img src="assets/Lab3/Lab3_9.png" alt="Lab3_9" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
-                        </div>
-                        <h3 class="card-title text-center mb-4">How I Increased Data Rate</h3>
-                        <p class="card-text">
-                            As mentioned before, my sampling period was around 100-200 ms, with spikes up to 700 ms, which is terrible.
-                            I noticed that the sampling periods were quantized into multiple of 100 ms, so I assumed something was 
-                            artificially slowing down my sensors. After looking into the source code of the library, I found that 
-                            the sampling period is determined by the "intermeasurement period" and "timing budget". After changing these
-                            from 100 ms to 20 ms (I think I can go down to 15 ms as well), I got *much* faster sampling rates. Here is
-                            a histogram of the new sampling periods of my sensor:
-                        </p>
-                        <div class="text-center mb-4">
-                            <img src="assets/Lab3/Lab3_10.png" alt="Lab3_10" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                            <img src="assets/Lab4/Lab4_5.jpg" alt="4_5" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
                         </div>
                         <p class="card-text">
-                            I'm getting about 30 Hz sampling from one ToF sensor, and I think it could be better. I'll do more testing later.
+                            Here's a video of my car following the tape for 6 feet. It curves to the left at the end, but this 
+                            is just because the motors turn off and the uneven amount of friction in the car causes the car to 
+                            turn. While under power, the car drives straight. 
                         </p>
-                        <h3 class="card-title text-center mb-4">Testing</h3>
-                        <p class="card-text">
-                            To test if both sensors were sampling correctly in parallel, I taped the two sensors on opposite sides of a box and
-                            walked back and forth between the walls of a hallway.
-                        </p>
-                        <div class="text-center mb-4">
-                            <img src="assets/Lab3/Lab3_12.jpg" alt="Lab3_12" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
-                        </div>
-                        <div class="text-center mb-4">
-                            <img src="assets/Lab3/Lab3_13.jpg" alt="Lab3_13" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
-                        </div>
-                        <div class="text-center mb-4">
-                            <img src="assets/Lab3/Lab3_14.jpg" alt="Lab3_14" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
-                        </div>
-                        <p class="card-text">
-                            The idea is that I should see two sinusoidal-ish waves from each sensor in isolation, and the sum of the two
-                            sensors should yield a constant value which equals the width of the hallway (2250 millimeters). Here is the data:
-                        </p>
-                        <div class="text-center mb-4">
-                            <img src="assets/Lab3/Lab3_15.png" alt="Lab3_15" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
-                        </div>
-                        <p class="card-text">
-                            As you can see, the two sensors move back and forth, and the sum hovers just shy of 2250 mm. 
-                        </p>
-                        <h2 class="card-title text-center mb-4">Discussion on Speed and Limiting Factor</h2>
-                        <p class="card-text">
-                            I mentioned before that my original attempts at collecting data from both sensors was really slow, and I sped
-                            it up by asynchronously gathering data and reducing the time budget + intermeasurement period. Asynchronously
-                            gathering data is important for faster data collection, but it's also crucial so that I can do Kalman filter and
-                            control calculations later on. 
-                        </p>
-                        <p class="card-text">
-                            To test my timing, I printed the time in milliseconds every time the main while loop ran, and then printed with
-                            a new line each time new data was recorded. Here are the results:
-                        </p>
-                        <div class="text-center mb-4">
-                            <img src="assets/Lab3/Lab3_16.png" alt="Lab3_16" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
-                        </div>
-                        <p class="card-text">
-                            The first thing to note is that the first time recorded is 0ms, indicating that data collection has just begun.
-                            Also, sensor 0 records once, then sensor 1 records three times, and then sensor 0 records twice. This is because
-                            the sensors record asynchronously. I posted this earlier, but here's the code that allows me to record data in
-                            parallel:
-                        </p>
-                        <div class="text-center mb-4">
-                            <img src="assets/Lab3/Lab3_11.png" alt="Lab3_11" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
-                        </div>
-                        <p class="card-text">
-                            The full loop usually executes in 2 ms, but it can sometimes take up to 7 ms. If this becomes an issue in the future,
-                            then I'll go line-by-line and check what's taking so long on the MCU. Also, when data is ready, the code takes longer
-                            to execute. This makes sense because there are just more instructions, but I'm guessing clearInterrupt() and 
-                            stopRanging() take the longest because they are probably blocking while writing to the I2C bus. There are also the
-                            print statements slowing things down as well.
-                        </p>
-                        <p class="card-text">
-                            The main thing that's limiting my sampling rate is definitely just waiting on checkForDataReady(). This 
-                            is controlled by the sensor's time budget and intermeasurement period. I'm currently at 20 ms for this.
-                            I tried bringing it down to 15 ms, but that didn't work.
-                        </p>
-                        <h2 class="card-title text-center mb-4">Collecting IMU and ToF Data</h2>
-                        <p class="card-text">
-                            I added the program from my IMU code to my ToF code so that I'm collecting both at the same time. Here is the 
-                            IMU data that I collected:
-                        </p>
-                        <div class="text-center mb-4">
-                            <img src="assets/Lab3/Lab3_17.png" alt="Lab3_17" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
-                        </div>
-                        <p class="card-text">
-                            And here is the ToF sensor data that I collected from both sensors:
-                        </p>
-                        <div class="text-center mb-4">
-                            <img src="assets/Lab3/Lab3_18.png" alt="Lab3_18" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
-                        </div>
-                        <p class="card-text">
-                            Finally, here are my three sensors initializing one after another:
-                        </p>
-                        <div class="text-center mb-4">
-                            <img src="assets/Lab3/Lab3_19.png" alt="Lab3_19" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        <!-- Embedded Video -->
+                        <div class="ratio ratio-16x9 mb-4">
+                            <iframe src="https://youtube.com/embed/62YTRlqGHx8" title="YouTube video" allowfullscreen></iframe>
                         </div>
                     </div>
                 </div>
