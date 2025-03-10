@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Fast Robots Spring 2025 - Kelvin Resch</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="assets/robot.ico" />
+        <!-- Bootstrap icons-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="css/styles.css" rel="stylesheet" />
+        <!-- Prism.js CSS for Syntax Highlighting -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    </head>
+    <body>
+        <!-- Prism.js JavaScript -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.js"></script>
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>  -->
+        <!-- Responsive navbar-->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-danger">
+            <div class="container px-lg-5">
+                <a class="navbar-brand" href="https://kelvinresch.github.io">Lab 5</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="https://kelvinresch.github.io">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="https://www.linkedin.com/in/kelvin-resch">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Header-->
+        <header class="py-5">
+            <div class="container px-lg-5">
+                <div class="p-4 p-lg-5 bg-light rounded-3 text-center">
+                    <div class="m-4 m-lg-5">
+                        <h1 class="display-5 fw-bold">Lab 5</h1>
+                        <p class="fs-4">Linear PID control and Linear Interpolation</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Content-->
+        <section class="pt-4">
+            <div class="container px-lg-5">
+                <!-- Single Bootstrap Card -->
+                <div class="card bg-light border-0">
+                    <div class="card-body p-4 p-lg-5">
+                        <!-- Card Content -->
+                        <h1 class="card-title text-center mb-4">Prelab</h1>
+                        <h2 class="card-title text-center mb-4">Artemis Pinout</h2>
+                        <p class="card-text">
+                            The two DC motors that control the left and right sides of the car are controlled by PWM, so 
+                            I needed to make sure that the pins that go to the motor controllers are all PWM-capable. The
+                            PWM capable pins on the Apollo3 microcontroller are the pins with the tilde (~) sign. I used
+                            pins 9, 11, 12, and 13. Two of these pins went to each motor controller, as well as a ground 
+                            line for each.
+                        </p>
+                        <h2 class="card-title text-center mb-4">Separate Batteries</h2>
+                        <p class="card-text">
+                            Batteries have output impedance that can cause drops in voltage when a lot of current is 
+                            demanded from them. Since we are driving motors, there will be a large load on the battery
+                            hooked up to them, and if the whole system is powered by one battery, then the microcontroller
+                            and sensors will all see voltage line fluctuations caused by the motor. In addition, the motor's
+                            physical commutator, inductance, and backEMF sends a lot of noise back up the power line, and 
+                            this would also negatively affect everything else, so using separate batteries ensures all the 
+                            messy signals are isolated to one part of the circuit, and the sensors and sensitive electronics
+                            are powered by a different, cleaner voltage line. 
+                        </p>
+                        <h2 class="card-title text-center mb-4">Intended Diagram</h2>
+                        <p class="card-text">
+                            Here's a diagram of my car's system, including motors, motor controllers, Artemis (with pinout),
+                            and batteries. You can get the schematic as a pdf <a href=
+                            "https://kelvinresch.github.io/assets/Lab4/Schematic.pdf" target="_blank" 
+                            rel="noopener noreferrer">here</a>.
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab4/Diagram.png" alt="Diagram" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Page Content-->
+        <section class="pt-4">
+            <div class="container px-lg-5">
+                <!-- Single Bootstrap Card -->
+                <div class="card bg-light border-0">
+                    <div class="card-body p-4 p-lg-5">
+                        <!-- Card Content -->
+                        <h1 class="card-title text-center mb-4">Lab 4</h1>
+                        <h2 class="card-title text-center mb-4">Benchtop Testing</h2>
+                        <p class="card-text">
+                            I connected my power supply to the battery input, my 650 mAh battery to the Artemis, and oscilloscope
+                            probe to the motor winding, and set the power supply current compliance to 2 A. Here is what my set
+                            up looked like:
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab4/Lab4_1.jpg" alt="Lab4_1" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <h2 class="card-title text-center mb-4">Power Supply Setting</h2>
+                        <p class="card-text">
+                            Since the battery voltage was at 3.7 V, that's what I set my power supply voltage to. For current compliance,
+                            I originally set it to 1 A, but I was hitting the limit and the power supply was throttling my voltage, so 
+                            increasing the ceiling to 2 A solved this issue.
+                        </p>
+                        <h2 class="card-title text-center mb-4">Testing with analogWrite()</h2>
+                        <p class="card-text">
+                            As mentioned before, the signals that control the motor are pulse-width modulated, and it's important to check
+                            that the correct signals are being sent. Also, it's important to check that there is not capacitive or inductive
+                            coupling happening with my wires. Here's the code that ran in my test:
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab4/Lab4_2.png" alt="4_2" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            If I probe the pin connected to BOUT1, I should see a PWM signal with a 100/255 (~40%) duty cycle.
+                            That's what I see:
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab4/Lab4_3.jpg" alt="4_3" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <h2 class="card-title text-center mb-4">Running the Car</h2>
+                        <p class="card-text">
+                            If I power the motor controllers with a battery and hook it up to the motors, it makes the wheels turn:
+                        </p>
+                        <!-- Embedded Video -->
+                        <div class="ratio ratio-16x9 mb-4">
+                            <iframe src="https://youtube.com/embed/7ShQGhhPYI4" title="YouTube video" allowfullscreen></iframe>
+                        </div>
+                        <h2 class="card-title text-center mb-4">Car Integration</h2>
+                        <p class="card-text">
+                            There is a lot to mount on the car, including signal and power components. To minimize EMI and coupling,
+                            I kept loops as small as possible by twisting wires and keeping them short. Also for the sensors, I drilled
+                            holes in the car's frame and screwed them. This allows the ToF and IMU sensors to be fixed to the reference
+                            frame of the car without moving around at all.
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab4/Lab4_4.png" alt="4_4" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <h2 class="card-title text-center mb-4">Lower PWM Limit</h2>
+                        <p class="card-text">
+                            If I send a 1% duty cycle to motors, they won't turn at all due to static friction. So, I need to surpass a 
+                            certain threshold in my duty cycle before the car starts moving at its minimum velocity. This changes depending
+                            on battery voltage, but that lower PWM threshold is around 31 and 45 for the right and left motors respectively.
+                        </p>
+                        <h2 class="card-title text-center mb-4">Open Loop Calibration</h2>
+                        <p class="card-text">
+                            I had to find the lower PWM limit for each motor earlier due to static friction in each drivetrain. In
+                            addition to static friction, there is also moving friction, and it's different for each side of the car.
+                            So, I also had to add a scaling factor in addition to the offset, and by tuning these scaling factors,
+                            I could make my car drive straight in open-loop control.
+                        </p>
+                        <p class="card-text">
+                            I made a function that describes the PWM duty cycle as a function of the throttle with constants for 
+                            PWM offset and scaling. The function is:
+                        </p>
+                        <p class="card-text">
+                            PWM_duty_cycle = (throttle * ((throttle_scaler - throttle_offset) / 255) ) + throttle_offset
+                        </p>
+                        <p class="card-text">
+                            This makes PWM_duty_cycle a linear function that starts at the point (0, throttle_offset) and
+                            ends at (255, throttle_scaler). If you want full beans, throttle_scaler = 255. Here's the code:
+                        </p>
+                        <!-- Section: Arduino Code Snippet -->
+                        <pre><code class="language-clike">
+float throttleLeftOffset = 45;
+float throttleRightOffset = 31;
+float leftScaler = (255.0 - throttleLeftOffset) / 255.0;
+float rightScaler = (108.0 - throttleRightOffset) / 255.0;
+/*
+    * Throttle should be between -255 and 255.
+    * Returns 0 if this is true. If throttle is 
+    * out of range, move() will saturate and return
+    * -1
+    */
+int move(int throttle) {
+    int returnValue = 0;
+
+    // If the -255 < throttle < 255, 
+    // Saturate and return -1.
+    if (throttle > 255) {
+    throttle = 255;
+    returnValue = -1;
+    }
+    
+    if (throttle < -255) {
+    throttle = -255;
+    returnValue = -1;
+    }
+
+    if (throttle > 0) {
+    int throttleLeft = (throttle * leftScaler) + throttleLeftOffset;
+    int throttleRight = (throttle * rightScaler) + throttleRightOffset;
+    analogWrite(MotorLeftForward, throttleLeft);
+    analogWrite(MotorRightForward, throttleRight);
+    analogWrite(MotorLeftBackward, 0);
+    analogWrite(MotorRightBackward, 0);
+    } 
+    else if (throttle < 0) {
+    int throttleLeft = (-throttle * leftScaler) + throttleLeftOffset;
+    int throttleRight = (-throttle * rightScaler) + throttleRightOffset;
+    analogWrite(MotorLeftBackward, throttleLeft);
+    analogWrite(MotorRightBackward, throttleRight);
+    analogWrite(MotorLeftForward, 0);
+    analogWrite(MotorRightForward, 0);
+    } else {
+    analogWrite(MotorLeftBackward, 0);
+    analogWrite(MotorRightBackward, 0);
+    analogWrite(MotorLeftForward, 0);
+    analogWrite(MotorRightForward, 0);
+    }
+
+    return returnValue;
+}
+                        </code></pre>
+                        <p class="card-text">
+                            There is also some code to do saturation in case move() gets called with more that it can take.
+                            My right motor is much stronger than my left motor, so I scale my left motor from 255 down to 108.
+                            This is quite drastic, so I'm going to test at higher speeds later and see if I can get away with
+                            less scaling. If I can, then I'll do something more complex than a two-point calibration to map
+                            throttle to PWM duty cycle.
+                        </p>
+                        <h2 class="card-title text-center mb-4">Open Loop Video</h2>
+                        <p class="card-text">
+                            I set up a test with a straight strip of tape for 6 feet. Here's what the set up looked like:
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab4/Lab4_5.jpg" alt="4_5" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            Here's a video of my car following the tape for 6 feet. It curves to the left at the end, but this 
+                            is just because the motors turn off and the uneven amount of friction in the car causes the car to 
+                            turn. While under power, the car drives straight. 
+                        </p>
+                        <!-- Embedded Video -->
+                        <div class="ratio ratio-16x9 mb-4">
+                            <iframe src="https://youtube.com/embed/62YTRlqGHx8" title="YouTube video" allowfullscreen></iframe>
+                        </div>
+                        <p class="card-text">
+                            I can also make the car turn a little by changing around the PWM values on the left and right. 
+                            In the future, I'll add an argument to my move() function so that it includes a turning term.
+                        </p>
+                        <!-- Embedded Video -->
+                        <div class="ratio ratio-16x9 mb-4">
+                            <iframe src="https://youtube.com/embed/oBdbmjpUkC0" title="YouTube video" allowfullscreen></iframe>
+                        </div>
+                        <p class="card-text">
+                            At this point, I can control my car's wheels to make it drive in a straight line. Separately, I can
+                            also collect data from my IMU and ToF sensors and report that data to my PC. I'm looking forward to 
+                            integrating both systems together to make the robot do some cool stuff.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer-->
+        <footer class="py-5 bg-dark">
+            <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Kelvin Resch 2025</p></div>
+        </footer>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="js/scripts.js"></script>
+    </body>
+</html>
