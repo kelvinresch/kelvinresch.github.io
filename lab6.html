@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Fast Robots Spring 2025 - Kelvin Resch</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="assets/robot.ico" />
+        <!-- Bootstrap icons-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="css/styles.css" rel="stylesheet" />
+        <!-- Prism.js CSS for Syntax Highlighting -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    </head>
+    <body>
+        <!-- Prism.js JavaScript -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.js"></script>
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>  -->
+        <!-- Responsive navbar-->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-danger">
+            <div class="container px-lg-5">
+                <a class="navbar-brand" href="https://kelvinresch.github.io">Lab 5</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="https://kelvinresch.github.io">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="https://www.linkedin.com/in/kelvin-resch">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Header-->
+        <header class="py-5">
+            <div class="container px-lg-5">
+                <div class="p-4 p-lg-5 bg-light rounded-3 text-center">
+                    <div class="m-4 m-lg-5">
+                        <h1 class="display-5 fw-bold">Lab 5</h1>
+                        <p class="fs-4">Linear PID control and Linear Interpolation</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Content-->
+        <section class="pt-4">
+            <div class="container px-lg-5">
+                <!-- Single Bootstrap Card -->
+                <div class="card bg-light border-0">
+                    <div class="card-body p-4 p-lg-5">
+                        <!-- Card Content -->
+                        <h1 class="card-title text-center mb-4">Prelab</h1>
+                        <h2 class="card-title text-center mb-4">Sending and Receiving Data</h2>
+                        <p class="card-text">
+                            As with the previous lab, I plan to have two separate system states: Collecting Data and Transmitting 
+                            Data. In the first state I also have my control loop. This way, I first collect data while controlling my car,
+                            then I stop my car and transmit the data to my laptop for analysis.
+                        </p>
+                        <p class="card-text">
+                            To maximize my data rates, I fill up my characteristic array full of data before sending. I've seen some projects
+                            projects upload one data sample per characteristic array, but I tested in lab 1 that I can only send characteristic
+                            arrays at around 42 Hz, which makes my payload rate my limiting factor. Therefore, if I can make my payloads larger,
+                            I can send data faster.
+                        </p>
+                        <p class="card-text">
+                            The code to set this up is quite easy:
+                        </p>
+                        <!-- Section: Arduino Code Snippet -->
+                        <pre><code class="language-clike">
+Serial.println("Finished collecting data. Sending now.");
+
+int count = 0;
+while (count < data_length) {
+    tx_estring_value.clear();
+    while ((tx_estring_value.get_length() < 100) && (count < data_length)) {
+    tx_estring_value.append(timesIMU[count]);
+    tx_estring_value.append(",");
+    tx_estring_value.append(accelX[count]);
+    tx_estring_value.append(",");
+    tx_estring_value.append(accelY[count]);
+    tx_estring_value.append(",");
+    tx_estring_value.append(accelZ[count]);
+    
+    count++;
+
+    if ((tx_estring_value.get_length() < 99) && (count < data_length)) {
+        tx_estring_value.append("|");
+    } else {
+        break;
+    }
+    }
+    Serial.println(tx_estring_value.c_str());
+
+    tx_characteristic_string.writeValue(tx_estring_value.c_str());
+    delay(30);
+}
+
+Serial.println("Sending Data Complete.");
+                        </code></pre>
+                        <p class="card-text">
+                            I just iterate over my data storage arrays, making sure that I only send the characteristic
+                            array over to my PC when it's string length gets close to its maximum value. After sending the
+                            characteristic array, I wait a short moment before filling it up and sending it over again.
+                        </p>
+                        <p class="card-text">
+                            From my PC's side, I just start my notification handler that parses the c-string that I receive over
+                            Bluetooth, and store that data into lists so that I can work with them in Python. 
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Page Content-->
+        <section class="pt-4">
+            <div class="container px-lg-5">
+                <!-- Single Bootstrap Card -->
+                <div class="card bg-light border-0">
+                    <div class="card-body p-4 p-lg-5">
+                        <!-- Card Content -->
+                        <h1 class="card-title text-center mb-4">Lab 5</h1>
+                        <h2 class="card-title text-center mb-4">ToF Sensor Data Rate</h2>
+                        <p class="card-text">
+                            After pulling a few hundred data points from the ToF sensor, I plotted the time between samples, and found that 
+                            the average sampling rate is around 40 Hz, and it's consistent. I'm happy running my control loop at this rate.
+                            I think that sometimes, this rate is limited by compute efficiency, not the sampling rate of the sensor, so if I
+                            optimize my code, then I can probably bring in the upper limit of sample periods from 30 ms down to around 20 ms.
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab5/Lab5_1.png" alt="Lab5_1" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            It's just a happy coincidence though that my PID control loop is running around the same speed as my sensor speed.
+                            In the future, I'll add more processing-heavy algorithms and also optimize my code heavily so that my control loop
+                            can be super fast, so I'll want to decouple these two rates from each other.
+                        </p>
+                        <h2 class="card-title text-center mb-4">Extrapolation</h2>
+                        <p class="card-text">
+                            Since I'm going to control at a faster rate than I can get data from my ToF sensor, I'm going to need to extrapolate
+                            my data. To do so, I'm going to use the slope of my ToF data, and project that slope from my most recent data point 
+                            to get an estimate of where I am. Unfortunately, my ToF sensor data is really noisy, and differentiating a noisy
+                            signal makes it garbage. So I put a first-order LPF on the differential input, and also put more filtering on the output.
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab5/Lab5_2.png" alt="Lab5_2" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            alpha = 0.4 wasn't good enough, so I increased it to 0.6, and I was happier with my results, but after looking closer my
+                            values, I realized I had a lot more phase margin to take advantage of. Here's the plot of alpha = 0.6:
+                        </p>
+                        <!-- Embedded Image -->
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab5/Lab5_3.png" alt="Lab5_3" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            After zooming in, I could see that I could afford to make my differential much more filtered.
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab5/Lab5_4.png" alt="Lab5_4" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            So, I increased my alpha to 0.8, meaning that 80% of my next data point will depend on past data.
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab5/Lab5_5.png" alt="Lab5_5" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            If you zoom in on the data, you can see clearly that the filter is working well to yield high-quality, extrapolated data.
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab5/Lab5_6.png" alt="Lab5_6" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            In addition, my control loop is now running a lot faster because I got rid of print statements. My control loop runs
+                            3-4x faster than my sensor.
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab5/Lab5_7.png" alt="Lab5_7" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            By the way, in testing, I found that updating IMU data takes about 4 ms alone. That's really long.
+                        </p>
+                        <p class="card-text">
+                            The fact that my control loop is running 3-4x faster than my data acquisition time means that extrapolation can make
+                            a significant difference in the quality of my control here. My P controller might be a little more jerky without good
+                            extrapolation. I would also build up my integral term faster because I'm collecting more error.
+                        </p>
+                        <h2 class="card-title text-center mb-4">PID Control</h2>
+                        <p class="card-text">
+                            For feedback control, I started with a simple P controller. This kind of worked, but I felt it was too slow, so I decided
+                            to add an integral term. Unfortunately, after tuning for a while, my car kept overshooting even as I turned k_i smaller
+                            and smaller. Eventually it was basically zero (0.00002), so I decided to try adding a derivative term to cancel out the
+                            integral windup. This caused the car to get really jerky, and I kept on getting weird spikes in the billions, which is
+                            really bad. I'm sure this was a fixable problem, but the other solution was to just go with a P controller again and make it
+                            work rather than have an "optimized" system that doesn't work. So, I went with a P controller and used a really low saturation
+                            value for my control signal so that I wouldn't overshoot.
+                        </p>
+                        <p class="card-text">
+                            This worked really well. In hindsight, it was pretty dumb to use a PI controller here since I don't have any forces acting
+                            on my car. It's perfectly semi-stable, so I really don't need the integral. I PD controller might work well here, if I can
+                            get the derivative portion to stop spazzing out. 
+                        </p>
+                        <p class="card-text">
+                            I think later on I'll try to get a PD controller tuned to hell and not worry about the integral term. It would be cool if I
+                            could get the car's wheels to turn backwards while slowing down. At the end of the day, I made the car work with 
+                            kp = 0.05, ki = 0.0, and kd = 0.0. 
+                        </p>
+                        <h2 class="card-title text-center mb-4">Range and Sampling Time</h2>
+                        <p class="card-text">
+                            I think the range of the sensor really doesn't matter much here. When the car is over 1.3m away, the control signal is probably
+                            saturated anyways, so it really doesn't matter if you're 1.5 m or 2 m away from the wall, you're just going to accelerate at the
+                            wall anyways. In terms of precision, short range mode might help marginally here, but I still don't think it's that big of a deal
+                            until you get a pretty aggressive derivative term.
+                        </p>
+                        <p class="card-text">
+                            As for sampling time, my ToF sensor runs at around 40-50 Hz, and my control loop is running at around 100-150 Hz. This
+                            is why extrapolation of my ToF sensor data is important.
+                        </p>
+                        <h2 class="card-title text-center mb-4">The road to feedback control</h2>
+                        <p class="card-text">
+                            I started this lab in a really dumb way. I thought that it'd be cool to not only extrapolate data, but use a complementary
+                            filter to combine IMU data with ToF data. This was a terrible idea because my IMU gave me so much drift that I thought it
+                            was an issue with how I was calculating my values. So I was "debugging" an intrinsic problem with my system for like six hours.
+                        </p>
+                        <p class="card-text">
+                            After realizing my mistake, accepting failure, and deleting all my code, attempt 2 was a little smoother. Extrapolating the pure
+                            ToF sensor data went pretty smoothly, although I needed to use a much stronger LPF than I anticipated. I guess this makes sense 
+                            because you're differentiating a noisy signal, and that usually gives you garbage, but I didn't internalize the extent of that at 
+                            first.
+                        </p>
+                        <p class="card-text">
+                            I spent a while tuning three LPFs that I put in my data acquisition system. One of the LPFs was on the differential 
+                            data[n-1] - data[n-2]. The other two LPFs were cascaded on each other on the differential output. This gave me a 
+                            second-order LPF that worked really well to prevent spikes in the raw data from affecting my extrapolation.
+                        </p>
+                        <p class="card-text">
+                            I made sure that my ToF sensor was really high quality because I knew from experience that feedback control tuning gets
+                            really easy if you have good data and good state estimation. So from here, things went pretty smoothly.
+                        </p>
+                        <p class="card-text">
+                            As mentioned before, I started with a P controller but was unhappy with its slow performance. So I moved on to a PI controller,
+                            which gave me overshoot, and then I added a D term to compensate for the overshoot. This didn't work because I got a ton of 
+                            noise on my D term, so I spent some time thinking and realized that this system doesn't even need an I term at all. This is 
+                            because there are no constant forces like gravity here. The entire car's state space is semi-stable, so an I term just adds 
+                            either oscillation or overshoot. Either way it's eating up my phase margin. I've also tuned my car's movement so that there's
+                            no "threshold" level of throttle for the car to move. move(255) is really fast and move(1) is really slow, but the car is only
+                            still when I write move(0). 
+                        </p>
+                        <p class="card-text">
+                            Anyways, by switching back to a P controller, the system worked really well and the car stopped right at the 12 inch mark
+                            from the wall, which is great. Here's a video of that happening:
+                        </p>
+                        <div class="ratio ratio-16x9 mb-4">
+                            <iframe src="https://youtube.com/embed/UuJPrbSSQuM" title="YouTube video" allowfullscreen></iframe>
+                        </div>
+                        <p class="card-text">
+                            And here's a graph of the position from the wall over time. You can see that it spends most of its time in saturation,
+                            and it has a small overshoot due to the momentum of the car as it approaches the setpoint:
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab5/Lab5_8.png" alt="Lab5_8" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            You can also see more definitely that the car spends most of its time in saturation by looking directly at the control
+                            input to the motors. Here's a graph of the PWM amplitude over time:
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab5/Lab5_9.png" alt="Lab5_9" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            If we put the two graphs together, you can see how the control signal saturates in large error and how it reacts to 
+                            in the actual position as you overshoot and come into the steady-state position:
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab5/Lab5_10.png" alt="Lab5_10" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <h2 class="card-title text-center mb-4">Conclusion</h2>
+                        <p class="card-text">
+                            Overall, I learned from this lab the importance of good data in control systems. It's an information problem, so if you
+                            have bad info, you'll have bad control. Also, I learned the simpler is better, and that it's worth it to build systems
+                            step-by-step instead of all at once, especially for algorithm-based programming like this. I'm also glad I put effort
+                            into making my car robust, because I didn't have to worry about it failing at all this lab. I'm looking forward to 
+                            implementing better state estimation techniques like Kalman filtering in future labs and using that to make better
+                            control systems.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer-->
+        <footer class="py-5 bg-dark">
+            <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Kelvin Resch 2025</p></div>
+        </footer>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="js/scripts.js"></script>
+    </body>
+</html>
