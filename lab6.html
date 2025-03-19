@@ -22,7 +22,7 @@
         <!-- Responsive navbar-->
         <nav class="navbar navbar-expand-lg navbar-dark bg-danger">
             <div class="container px-lg-5">
-                <a class="navbar-brand" href="https://kelvinresch.github.io">Lab 5</a>
+                <a class="navbar-brand" href="https://kelvinresch.github.io">Lab 6</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
@@ -37,8 +37,8 @@
             <div class="container px-lg-5">
                 <div class="p-4 p-lg-5 bg-light rounded-3 text-center">
                     <div class="m-4 m-lg-5">
-                        <h1 class="display-5 fw-bold">Lab 5</h1>
-                        <p class="fs-4">Linear PID control and Linear Interpolation</p>
+                        <h1 class="display-5 fw-bold">Lab 6</h1>
+                        <p class="fs-4">Orientation Control</p>
                     </div>
                 </div>
             </div>
@@ -52,61 +52,52 @@
                     <div class="card-body p-4 p-lg-5">
                         <!-- Card Content -->
                         <h1 class="card-title text-center mb-4">Prelab</h1>
+                        <h2 class="card-title text-center mb-4">PID Input Signal</h2>
+                        <p class="card-text">
+                            The name of the game here is high quality orientation data. My IMU measures angular velocities in the
+                            directions of roll, pitch, and yaw, which means to get actual position, I need to integrate my values.
+                            This can cause some pretty bad drift over time.
+                        </p>
+                        <p class="card-text">
+                            One way I can minimize drift in my orientation data is by using arctangents of my IMU's accelerometer
+                            to find absolute position. The issue with this data alone is that it doesn't give me yaw, and it also
+                            gets unusably noisy when either the x or y components are near 0. So to compensate in these
+                            regions, I can rely more heavily on the gyroscope data.
+                        </p>
+                        <p class="card-text">
+                            In terms of sensor limitations, the ICM-20948 is a very capable sensor, but it does have a maximum 
+                            degrees per second of rotation that it can measure. Similarly, it also has maximum acceleration and
+                            magnetic amplitude, but I think the rotational acceleration is going to be the first maximum that I 
+                            hit, if I do. According to the 
+                            <a href="https://github.com/sparkfun/SparkFun_ICM-20948_ArduinoLibrary/blob/main/src/util/ICM_20948_REGISTERS.h" 
+                            target="_blank" rel="noopener noreferrer">ICM-20948's register mappings</a>, the default gyroscope
+                            maximum degrees-per-second is +- 1000, which is around 3 revolutions per second. This should be sufficient 
+                            for me, and I'll keep in mind not to go over this limit in my testing.
+                        </p>
                         <h2 class="card-title text-center mb-4">Sending and Receiving Data</h2>
                         <p class="card-text">
-                            As with the previous lab, I plan to have two separate system states: Collecting Data and Transmitting 
-                            Data. In the first state I also have my control loop. This way, I first collect data while controlling my car,
-                            then I stop my car and transmit the data to my laptop for analysis.
+                            As I said before, with controls, high-quality data is key. The better your data is, the better the 
+                            control. So, I need to be able to collect data from my Artemis, and send it to my PC for analysis.
+                            To do so, I used the example code from the ICM-20948 library to set up my DMP. After some basic 
+                            functionality testing, I checked that the data I recieved to my PC matched what I expected based on
+                            the car's movement.
                         </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab6/Lab6_1.png" alt="Lab6_1" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
                         <p class="card-text">
-                            To maximize my data rates, I fill up my characteristic array full of data before sending. I've seen some projects
-                            projects upload one data sample per characteristic array, but I tested in lab 1 that I can only send characteristic
-                            arrays at around 42 Hz, which makes my payload rate my limiting factor. Therefore, if I can make my payloads larger,
-                            I can send data faster.
+                            Once I was happy with the DMP data that I was collecting, I moved on to retuning my move() 
+                            function. This function would take in a value between -255 and 255, and it would make the car rotate
+                            at a certain rate. Unfortunately, the static friction to overcome rotation is much higher than the 
+                            static friction to overcome rolling forwards and backwards, so I had to retune my move() function. 
+                            I did this using a temporary command over ble that would allow me to remotely change my tuning values:
                         </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab6/Lab6_2.png" alt="Lab6_2" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
                         <p class="card-text">
-                            The code to set this up is quite easy:
-                        </p>
-                        <!-- Section: Arduino Code Snippet -->
-                        <pre><code class="language-clike">
-Serial.println("Finished collecting data. Sending now.");
-
-int count = 0;
-while (count < data_length) {
-    tx_estring_value.clear();
-    while ((tx_estring_value.get_length() < 100) && (count < data_length)) {
-    tx_estring_value.append(timesIMU[count]);
-    tx_estring_value.append(",");
-    tx_estring_value.append(accelX[count]);
-    tx_estring_value.append(",");
-    tx_estring_value.append(accelY[count]);
-    tx_estring_value.append(",");
-    tx_estring_value.append(accelZ[count]);
-    
-    count++;
-
-    if ((tx_estring_value.get_length() < 99) && (count < data_length)) {
-        tx_estring_value.append("|");
-    } else {
-        break;
-    }
-    }
-    Serial.println(tx_estring_value.c_str());
-
-    tx_characteristic_string.writeValue(tx_estring_value.c_str());
-    delay(30);
-}
-
-Serial.println("Sending Data Complete.");
-                        </code></pre>
-                        <p class="card-text">
-                            I just iterate over my data storage arrays, making sure that I only send the characteristic
-                            array over to my PC when it's string length gets close to its maximum value. After sending the
-                            characteristic array, I wait a short moment before filling it up and sending it over again.
-                        </p>
-                        <p class="card-text">
-                            From my PC's side, I just start my notification handler that parses the c-string that I receive over
-                            Bluetooth, and store that data into lists so that I can work with them in Python. 
+                            This allowed me to rapidly find my offsets and scaling values for my left and right motors so that
+                            the robot would spin well in one spot.
                         </p>
                     </div>
                 </div>
@@ -120,17 +111,19 @@ Serial.println("Sending Data Complete.");
                 <div class="card bg-light border-0">
                     <div class="card-body p-4 p-lg-5">
                         <!-- Card Content -->
-                        <h1 class="card-title text-center mb-4">Lab 5</h1>
-                        <h2 class="card-title text-center mb-4">ToF Sensor Data Rate</h2>
+                        <h1 class="card-title text-center mb-4">Lab 6</h1>
+                        <h2 class="card-title text-center mb-4">PID</h2>
                         <p class="card-text">
-                            After pulling a few hundred data points from the ToF sensor, I plotted the time between samples, and found that 
-                            the average sampling rate is around 40 Hz, and it's consistent. I'm happy running my control loop at this rate.
-                            I think that sometimes, this rate is limited by compute efficiency, not the sampling rate of the sensor, so if I
-                            optimize my code, then I can probably bring in the upper limit of sample periods from 30 ms down to around 20 ms.
+                            The PID loop that I wrote worked well to control my robot's yaw, but the integral term was almost zero in
+                            my final tune. My final values were Kp = 0.4, Ki = 0.002, and Kd = 0.05. This gave me good damping near
+                            my setpoint, and high acceleration when I was far away from my setpoint. The fact that Ki was so small reinforced
+                            my theory from Lab 5 that for a semistable system such as a car on flat ground, the integral term is simply
+                            unneeded. It only really causes overshoot and phase lag. Again, for the final tune in later labs, I'm going to 
+                            go with an optimized PD controller because I think that will result in the best performance for my system.
+                            Here's a video of my controller operating:
                         </p>
-                        <!-- Embedded Image -->
-                        <div class="text-center mb-4">
-                            <img src="assets/Lab5/Lab5_1.png" alt="Lab5_1" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        <div class="ratio ratio-16x9 mb-4">
+                            <iframe src="https://youtube.com/embed/iejtN3D1_oI" title="YouTube video" allowfullscreen></iframe>
                         </div>
                         <p class="card-text">
                             It's just a happy coincidence though that my PID control loop is running around the same speed as my sensor speed.
