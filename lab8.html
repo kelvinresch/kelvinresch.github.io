@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Fast Robots Spring 2025 - Kelvin Resch</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="assets/robot.ico" />
+        <!-- Bootstrap icons-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="css/styles.css" rel="stylesheet" />
+        <!-- Prism.js CSS for Syntax Highlighting -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    </head>
+    <body>
+        <!-- Prism.js JavaScript -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.js"></script>
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>  -->
+        <!-- Responsive navbar-->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-danger">
+            <div class="container px-lg-5">
+                <a class="navbar-brand" href="https://kelvinresch.github.io">Lab 6</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="https://kelvinresch.github.io">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="https://www.linkedin.com/in/kelvin-resch">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Header-->
+        <header class="py-5">
+            <div class="container px-lg-5">
+                <div class="p-4 p-lg-5 bg-light rounded-3 text-center">
+                    <div class="m-4 m-lg-5">
+                        <h1 class="display-5 fw-bold">Lab 6</h1>
+                        <p class="fs-4">Orientation Control</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Content-->
+        <section class="pt-4">
+            <div class="container px-lg-5">
+                <!-- Single Bootstrap Card -->
+                <div class="card bg-light border-0">
+                    <div class="card-body p-4 p-lg-5">
+                        <!-- Card Content -->
+                        <h1 class="card-title text-center mb-4">Prelab</h1>
+                        <h2 class="card-title text-center mb-4">PID Input Signal</h2>
+                        <p class="card-text">
+                            The name of the game here is high quality orientation data. My IMU measures angular velocities in the
+                            directions of roll, pitch, and yaw, which means to get actual position, I need to integrate my values.
+                            This can cause some pretty bad drift over time.
+                        </p>
+                        <p class="card-text">
+                            One way I can minimize drift in my orientation data is by using arctangents of my IMU's accelerometer
+                            to find absolute position. The issue with this data alone is that it doesn't give me yaw, and it also
+                            gets unusably noisy when either the x or y components are near 0. So to compensate in these
+                            regions, I can rely more heavily on the gyroscope data.
+                        </p>
+                        <p class="card-text">
+                            In terms of sensor limitations, the ICM-20948 is a very capable sensor, but it does have a maximum 
+                            degrees per second of rotation that it can measure. Similarly, it also has maximum acceleration and
+                            magnetic amplitude, but I think the rotational acceleration is going to be the first maximum that I 
+                            hit, if I do. According to the 
+                            <a href="https://github.com/sparkfun/SparkFun_ICM-20948_ArduinoLibrary/blob/main/src/util/ICM_20948_REGISTERS.h" 
+                            target="_blank" rel="noopener noreferrer">ICM-20948's register mappings</a>, the default gyroscope
+                            maximum degrees-per-second is +- 1000, which is around 3 revolutions per second. This should be sufficient 
+                            for me, and I'll keep in mind not to go over this limit in my testing.
+                        </p>
+                        <h2 class="card-title text-center mb-4">Sending and Receiving Data</h2>
+                        <p class="card-text">
+                            As I said before, with controls, high-quality data is key. The better your data is, the better the 
+                            control. So, I need to be able to collect data from my Artemis, and send it to my PC for analysis.
+                            To do so, I used the example code from the ICM-20948 library to set up my DMP. After some basic 
+                            functionality testing, I checked that the data I recieved to my PC matched what I expected based on
+                            the car's movement.
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab6/Lab6_1.png" alt="Lab6_1" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            Once I was happy with the DMP data that I was collecting, I moved on to retuning my move() 
+                            function. This function would take in a value between -255 and 255, and it would make the car rotate
+                            at a certain rate. Unfortunately, the static friction to overcome rotation is much higher than the 
+                            static friction to overcome rolling forwards and backwards, so I had to retune my move() function. 
+                            I did this using a temporary command over ble that would allow me to remotely change my tuning values:
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab6/Lab6_2.png" alt="Lab6_2" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            This allowed me to rapidly find my offsets and scaling values for my left and right motors so that
+                            the robot would spin well in one spot.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Page Content-->
+        <section class="pt-4">
+            <div class="container px-lg-5">
+                <!-- Single Bootstrap Card -->
+                <div class="card bg-light border-0">
+                    <div class="card-body p-4 p-lg-5">
+                        <!-- Card Content -->
+                        <h1 class="card-title text-center mb-4">Lab 6</h1>
+                        <h2 class="card-title text-center mb-4">PID</h2>
+                        <p class="card-text">
+                            The PID loop that I wrote worked well to control my robot's yaw, but the integral term was almost zero in
+                            my final tune. My final values were Kp = 0.4, Ki = 0.002, and Kd = 0.05. This gave me good damping near
+                            my setpoint, and high acceleration when I was far away from my setpoint. The fact that Ki was so small reinforced
+                            my theory from Lab 5 that for a semistable system such as a car on flat ground, the integral term is simply
+                            unneeded. It only really causes overshoot and phase lag. Again, for the final tune in later labs, I'm going to 
+                            go with an optimized PD controller because I think that will result in the best performance for my system.
+                            Here's a video of my controller operating:
+                        </p>
+                        <div class="ratio ratio-16x9 mb-4">
+                            <iframe src="https://youtube.com/embed/iejtN3D1_oI" title="YouTube video" allowfullscreen></iframe>
+                        </div>
+                        <h2 class="card-title text-center mb-4">Sampling Times</h2>
+                        <p class="card-text">
+                            Since I'm no longer polling my time-of-flight sensor, my control loop has drastically sped up. Here's a histogram
+                            of the number of milliseconds that each control loop takes:
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab6/Lab6_3.png" alt="Lab6_3" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            As you can see, the time between controls is drastically shortened compared to the 15-25 milliseconds 
+                            that a control loop in Lab 5 would take. This is because I optimized my code by removing unneeded low
+                            pass filters. I could do this because the data that a got from the DMP was a lot less noisy than the 
+                            data from the time-of-flight sensors.
+                        </p>
+                        <p class="card-text">
+                            This ensures that my control rate is at least 10x faster than the dynamics of my system.
+                        </p>
+                        <h2 class="card-title text-center mb-4">Development Process</h2>
+                        <p class="card-text">
+                            As previously said, my first goal was to acquire high quality data from the DMP, so I used the example
+                            code provided by the library to play with my car's Euler angles and orientation. Once I found that I 
+                            had low-noise, high accuracy orientation data that didn't drift over time, I integrated the setup()
+                            code into my own bluetooth program, and reported that DMP data to my PC over Bluetooth.
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab6/Lab6_4.png" alt="Lab6_4" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            Once I observed this high quality data streaming to my PC, I had the confidence to employ the PID code 
+                            from lab 5. This was mostly just copy and paste, since my control code was fairly functional. I was also
+                            able to remove a lot of complexity because I no longer needed low pass filters for noisy data and clamping 
+                            because I tuned my move() function much better this time around.
+                        </p>
+                        <p class="card-text">
+                            High quality data and good actuators made tuning my PID loop very easy. I used a simply Zeigler Nichols 
+                            approach, increasing Kp until I saw a lot of oscillation. This indicated that I was at the edge of stability.
+                            I then started with 0.6 Kp, 0.5 Ki, and 0.125 Kd, but this worked poorly. I knew that the integral term was
+                            the source of most of my problems because I was in a semistable system, so I reduced my Ki term and increased
+                            my Kp term. I knew I was going in the right direction because my controller quicky got much faster and less
+                            oscillatory.
+                        </p>
+                        <p class="card-text">
+                            Here is a plot of my yaw data over time as I kick the car once. You can see that it deflects almost 90 degrees,
+                            but it is able to recover quickly with limited overshoot. My setpoint in this example is 0 degrees.
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab6/Lab6_5.png" alt="Lab6_5" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer-->
+        <footer class="py-5 bg-dark">
+            <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Kelvin Resch 2025</p></div>
+        </footer>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="js/scripts.js"></script>
+    </body>
+</html>
