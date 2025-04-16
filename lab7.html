@@ -75,14 +75,14 @@
                             sensor doesn't take data points very often, but the data that it does collect is quite high-quality.
                         </p>
                         <div class="text-center mb-4">
-                            <img src="assets/Lab7/Lab7_1.png" alt="Lab7_1" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                            <img src="assets/Lab7/7_1.png" alt="Lab7_1" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
                         </div>
                         <p class="card-text">
                             Using the gradient() method in numpy, I calculated the velocity of my car at each time step. I then took the average of these velocities to find my
                             steady-state velocity.
                         </p>
                         <div class="text-center mb-4">
-                            <img src="assets/Lab7/Lab7_2.png" alt="Lab7_2" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                            <img src="assets/Lab7/7_2.png" alt="Lab7_2" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
                         </div>
                         <p class="card-text">
                             I found that the steady-state velocity of my car at 60% duty cycle was 2.1 m/s. 
@@ -94,13 +94,13 @@
                             and measuring the time it takes to get to 90% of that speed. 
                         </p>
                         <div class="text-center mb-4">
-                            <img src="assets/Lab7/Lab7_4.png" alt="Lab7_4" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                            <img src="assets/Lab7/7_4.png" alt="Lab7_4" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
                         </div>
                         <p class="card-text">
                             If I graph my velocity, I can see that it takes about 1500 ms to get to my 90% steady state velocity. 
                         </p>
                         <div class="text-center mb-4">
-                            <img src="assets/Lab7/Lab7_5.png" alt="Lab7_5" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                            <img src="assets/Lab7/7_5.png" alt="Lab7_5" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
                         </div>
                         <h2 class="card-title text-center mb-4">Drag and Momentum</h2>
                         <p class="card-text">
@@ -108,14 +108,14 @@
                             my A and B matrices:
                         </p>
                         <div class="text-center mb-4">
-                            <img src="assets/Lab7/Lab7_6.jpg" alt="Lab7_6" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                            <img src="assets/Lab7/7_6.jpg" alt="Lab7_6" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
                         </div>
                         <p class="card-text">
                             According to this system, drag will be 1/steady_state_velocity and momentum will be -drag*rise_time/ln(0.1).
                             This math is done in the python code below:
                         </p>
                         <div class="text-center mb-4">
-                            <img src="assets/Lab7/Lab7_7.png" alt="Lab7_7" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                            <img src="assets/Lab7/7_7.png" alt="Lab7_7" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
                         </div>
                         <h2 class="card-title text-center mb-4">Kalman Filtering in Python</h2>
                         <p class="card-text">
@@ -129,17 +129,17 @@
                             of 50, but found that this was too high, which is how I ended up with a value of 10 for sigma_z.
                         </p>
                         <div class="text-center mb-4">
-                            <img src="assets/Lab7/Lab7_8.png" alt="Lab7_8" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                            <img src="assets/Lab7/7_8.png" alt="Lab7_8" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
                         </div>
                         <p class="card-text">
                             I then wrote the Kalman Filter estimation step in python, as well as a loop to test the Kalman filter's ability
                             to estimate the state of my car.
                         </p>
                         <div class="text-center mb-4">
-                            <img src="assets/Lab7/Lab7_9.png" alt="Lab7_9" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                            <img src="assets/Lab7/7_9.png" alt="Lab7_9" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
                         </div>
                         <div class="text-center mb-4">
-                            <img src="assets/Lab7/Lab7_10.png" alt="Lab7_10" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                            <img src="assets/Lab7/7_10.png" alt="Lab7_10" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
                         </div>
                         <h2 class="card-title text-center mb-4">Kalman Filtering on the Car</h2>
                         <p class="card-text">
@@ -149,7 +149,7 @@
                             and got the car tuned really well.
                         </p>
                         <div class="text-center mb-4">
-                            <img src="assets/Lab7/Lab7_11.png" alt="Lab7_11" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                            <img src="assets/Lab7/7_11.png" alt="Lab7_11" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
                         </div>
                         <p class="card-text">
                             Using the Kalman filter and improved PID, I was able to control from a much farther distance, and I was
