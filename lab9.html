@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Fast Robots Spring 2025 - Kelvin Resch</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="assets/robot.ico" />
+        <!-- Bootstrap icons-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="css/styles.css" rel="stylesheet" />
+        <!-- Prism.js CSS for Syntax Highlighting -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    </head>
+    <body>
+        <!-- Prism.js JavaScript -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.js"></script>
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>  -->
+        <!-- Responsive navbar-->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-danger">
+            <div class="container px-lg-5">
+                <a class="navbar-brand" href="https://kelvinresch.github.io">Lab 9</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="https://kelvinresch.github.io">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="https://www.linkedin.com/in/kelvin-resch">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Header-->
+        <header class="py-5">
+            <div class="container px-lg-5">
+                <div class="p-4 p-lg-5 bg-light rounded-3 text-center">
+                    <div class="m-4 m-lg-5">
+                        <h1 class="display-5 fw-bold">Lab 8</h1>
+                        <p class="fs-4">Stunts!</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Content-->
+        <section class="pt-4">
+            <div class="container px-lg-5">
+                <!-- Single Bootstrap Card -->
+                <div class="card bg-light border-0">
+                    <div class="card-body p-4 p-lg-5">
+                        <!-- Card Content -->
+                        <h1 class="card-title text-center mb-4">Task A</h1>
+                        <h2 class="card-title text-center mb-4">Flip</h2>
+                        <p class="card-text">
+                            This flip is an exercise in open loop control. I have to get my robot to flip over, and then land 
+                            on its wheels. To do this, I need to get my robot to rotate 180 degrees in the air. This is a lot 
+                            of angular momentum, and I need to build it up by accelerating quickly. In addition, I need a lot 
+                            of grip on my wheels to transfer torque into the ground. 
+                        </p>
+                        <p class="card-text">
+                            To do this, I applied double-sided 3M tape to my front two wheels. I decided that it wasn't worth it to
+                            put tape on all four wheels because on deceleration, only the front two wheels are going to be
+                            pushing against the ground.
+                        </p>
+                        <p class="card-text">
+                            After I first added the tape, the car became completely stuck to the ground. It turns out that 3M makes
+                            some really good tape. I added a video of this behavior at the end of the lab report, in the bloopers
+                            section. After peeling my car off the ground, I rolled it around carefully to collect some
+                            dust on the tires so that they would be the right amount of stickiness to accelerate, decelerate, and flip.
+                        </p>
+                        <p class="card-text">
+                            In addition, to make flipping easier, I also moved the center of gravity of my car up and to the front
+                            of the car by taping a handful of M10 screws to the chassis. This made the car much easier to flip because
+                            the mass of the screws would pull the car forward and over as it decelerated. 
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab8/Lab8_8.jpg" alt="Lab8_8" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <h2 class="card-title text-center mb-4">Test Setup</h2>
+                        <p class="card-text">
+                            I set up a test rig to test my flip similar to the one that was available in the hallway outside of the fast Robots
+                            lab. I used a line in the floor to mark my starting point, and a rectangular pad of duct tape as the traction pad,
+                            although this ended up not being very necessary to flip. I also put a large cardboard box at the end of the traction
+                            pad so that the ToF sensor would be able to sense the "wall."
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab8/Lab8_1.jpg" alt="Lab8_1" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            The distance between the traction pad and the starting line of the test was 80 inches, or a little over two meters.
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab8/Lab8_2.jpg" alt="Lab8_2" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab8/Lab8_3.jpg" alt="Lab8_3" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            After tuning my series of commands, I was able to reliably get the car to flip over and return to the start line.
+                        </p>
+                        <div class="ratio ratio-16x9 mb-4">
+                            <iframe src="https://youtube.com/embed/vR784-Secw8" title="YouTube video" allowfullscreen></iframe>
+                        </div>
+                        <div class="ratio ratio-16x9 mb-4">
+                            <iframe src="https://youtube.com/embed/DOeSy2esT9Q" title="YouTube video" allowfullscreen></iframe>
+                        </div>
+                        <div class="ratio ratio-16x9 mb-4">
+                            <iframe src="https://youtube.com/embed/vR784-Secw8" title="YouTube video" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Page Content-->
+        <section class="pt-4">
+            <div class="container px-lg-5">
+                <!-- Single Bootstrap Card -->
+                <div class="card bg-light border-0">
+                    <div class="card-body p-4 p-lg-5">
+                        <!-- Card Content -->
+                        <h1 class="card-title text-center mb-4">Data</h1>
+                        <p class="card-text">
+                            Here's my ToF sensor recording data as I decelerate into the flip. The ToF data becomes unintelligible after
+                            this because the car is upside down, and the ToF sensor is no longer able to see the wall. 
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab8/Lab8_9.png" alt="Lab8_9" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            Next to the ToF data is the throttle input to the motor. I worked with some other students to test different
+                            strategies for flipping, and I found that the easiest way to flip was to accelerate at full throttle, 
+                            and then decelerate at full throttle. I also experimented with a brief stop just after the flip so that
+                            the car wouldn't try accelerating backwards while it was still bouncing around after the flip. This 
+                            increased the consistency of the flips significantly.
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab8/Lab8_10.png" alt="Lab8_10" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Page Content-->
+        <section class="pt-4">
+            <div class="container px-lg-5">
+                <!-- Single Bootstrap Card -->
+                <div class="card bg-light border-0">
+                    <div class="card-body p-4 p-lg-5">
+                        <!-- Card Content -->
+                        <h1 class="card-title text-center mb-4">Blooper</h1>
+                        <p class="card-text">
+                            I totally overkilled it with the double-sided tape on my wheels. After meticulously applying the tape
+                            consistently across my wheels, I tried running a flip on the car, and it was completely stuck to the ground.
+                        </p>
+                        <div class="ratio ratio-16x9 mb-4">
+                            <iframe src="https://youtube.com/embed/_VQplbH-xoI" title="YouTube video" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer-->
+        <footer class="py-5 bg-dark">
+            <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Kelvin Resch 2025</p></div>
+        </footer>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="js/scripts.js"></script>
+    </body>
+</html>
