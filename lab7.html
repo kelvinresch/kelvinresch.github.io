@@ -51,127 +51,113 @@
                 <div class="card bg-light border-0">
                     <div class="card-body p-4 p-lg-5">
                         <!-- Card Content -->
-                        <h1 class="card-title text-center mb-4">Prelab</h1>
-                        <h2 class="card-title text-center mb-4">PID Input Signal</h2>
+                        <h1 class="card-title text-center mb-4">Estimate Drag and Momentum</h1>
+                        <h2 class="card-title text-center mb-4">Steady State Velocity</h2>
                         <p class="card-text">
-                            The name of the game here is high quality orientation data. My IMU measures angular velocities in the
-                            directions of roll, pitch, and yaw, which means to get actual position, I need to integrate my values.
-                            This can cause some pretty bad drift over time.
-                        </p>
-                        <p class="card-text">
-                            One way I can minimize drift in my orientation data is by using arctangents of my IMU's accelerometer
-                            to find absolute position. The issue with this data alone is that it doesn't give me yaw, and it also
-                            gets unusably noisy when either the x or y components are near 0. So to compensate in these
-                            regions, I can rely more heavily on the gyroscope data.
-                        </p>
-                        <p class="card-text">
-                            In terms of sensor limitations, the ICM-20948 is a very capable sensor, but it does have a maximum 
-                            degrees per second of rotation that it can measure. Similarly, it also has maximum acceleration and
-                            magnetic amplitude, but I think the rotational acceleration is going to be the first maximum that I 
-                            hit, if I do. According to the 
-                            <a href="https://github.com/sparkfun/SparkFun_ICM-20948_ArduinoLibrary/blob/main/src/util/ICM_20948_REGISTERS.h" 
-                            target="_blank" rel="noopener noreferrer">ICM-20948's register mappings</a>, the default gyroscope
-                            maximum degrees-per-second is +- 1000, which is around 3 revolutions per second. This should be sufficient 
-                            for me, and I'll keep in mind not to go over this limit in my testing.
-                        </p>
-                        <h2 class="card-title text-center mb-4">Sending and Receiving Data</h2>
-                        <p class="card-text">
-                            As I said before, with controls, high-quality data is key. The better your data is, the better the 
-                            control. So, I need to be able to collect data from my Artemis, and send it to my PC for analysis.
-                            To do so, I used the example code from the ICM-20948 library to set up my DMP. After some basic 
-                            functionality testing, I checked that the data I recieved to my PC matched what I expected based on
-                            the car's movement.
+                            Prior to writing the Kalman Filter, I need to characterize the dynamics of my system. I need to
+                            calculate the drag of my system. In order to do this, I need to find the steady state velocity 
+                            of my system. The steady-state velocity was defined as the velocity when I send a PWM duty cycle
+                            of 150 into the motor drivers. This is roughly 60% duty cycle. I then measured the position of
+                            the car from the wall using the time-of-flight sensors, and I recorded the time of each measurement.
+                            Using this data, I calculated my steady-state velocity.
                         </p>
                         <div class="text-center mb-4">
-                            <img src="assets/Lab6/Lab6_1.png" alt="Lab6_1" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                            <img src="assets/Lab7/Lab7_3.png" alt="Lab7_3" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
                         </div>
                         <p class="card-text">
-                            Once I was happy with the DMP data that I was collecting, I moved on to retuning my move() 
-                            function. This function would take in a value between -255 and 255, and it would make the car rotate
-                            at a certain rate. Unfortunately, the static friction to overcome rotation is much higher than the 
-                            static friction to overcome rolling forwards and backwards, so I had to retune my move() function. 
-                            I did this using a temporary command over ble that would allow me to remotely change my tuning values:
+                            From the chart you can see that the car is moving at a constant velocity toward the wall. Then it hits
+                            0 distance which means the car impacted the wall. At the same time, I cut out the command to the motors. 
+                            After that, it spins a little and then settles down.
+                        </p>
+                        <p class="card-text">
+                            If I take the window of data only when the car is moving at steady state velocity, I get a nice, linear
+                            plot of the distance as the car approaches the wall at a constant speed. Unfortunately the time-of-flight
+                            sensor doesn't take data points very often, but the data that it does collect is quite high-quality.
                         </p>
                         <div class="text-center mb-4">
-                            <img src="assets/Lab6/Lab6_2.png" alt="Lab6_2" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                            <img src="assets/Lab7/Lab7_1.png" alt="Lab7_1" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
                         </div>
                         <p class="card-text">
-                            This allowed me to rapidly find my offsets and scaling values for my left and right motors so that
-                            the robot would spin well in one spot.
+                            Using the gradient() method in numpy, I calculated the velocity of my car at each time step. I then took the average of these velocities to find my
+                            steady-state velocity.
                         </p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Page Content-->
-        <section class="pt-4">
-            <div class="container px-lg-5">
-                <!-- Single Bootstrap Card -->
-                <div class="card bg-light border-0">
-                    <div class="card-body p-4 p-lg-5">
-                        <!-- Card Content -->
-                        <h1 class="card-title text-center mb-4">Lab 6</h1>
-                        <h2 class="card-title text-center mb-4">PID</h2>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab7/Lab7_2.png" alt="Lab7_2" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
                         <p class="card-text">
-                            The PID loop that I wrote worked well to control my robot's yaw, but the integral term was almost zero in
-                            my final tune. My final values were Kp = 0.4, Ki = 0.002, and Kd = 0.05. This gave me good damping near
-                            my setpoint, and high acceleration when I was far away from my setpoint. The fact that Ki was so small reinforced
-                            my theory from Lab 5 that for a semistable system such as a car on flat ground, the integral term is simply
-                            unneeded. It only really causes overshoot and phase lag. Again, for the final tune in later labs, I'm going to 
-                            go with an optimized PD controller because I think that will result in the best performance for my system.
-                            Here's a video of my controller operating:
+                            I found that the steady-state velocity of my car at 60% duty cycle was 2.1 m/s. 
+                        </p>
+                        <h2 class="card-title text-center mb-4">Rise Time</h2>
+                        <p class="card-text">
+                            Now that I know my steady state velocity, I can find my rise time, the time it takes to get to 90%
+                            of my steady state velocity. I can do this by accelerating my car from 0 speed up to steady state velocity,
+                            and measuring the time it takes to get to 90% of that speed. 
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab7/Lab7_4.png" alt="Lab7_4" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            If I graph my velocity, I can see that it takes about 1500 ms to get to my 90% steady state velocity. 
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab7/Lab7_5.png" alt="Lab7_5" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <h2 class="card-title text-center mb-4">Drag and Momentum</h2>
+                        <p class="card-text">
+                            I can use my equations of motion to get expressions to calculate my drag and momentum. Here are 
+                            my A and B matrices:
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab7/Lab7_6.jpg" alt="Lab7_6" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            According to this system, drag will be 1/steady_state_velocity and momentum will be -drag*rise_time/ln(0.1).
+                            This math is done in the python code below:
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab7/Lab7_7.png" alt="Lab7_7" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <h2 class="card-title text-center mb-4">Kalman Filtering in Python</h2>
+                        <p class="card-text">
+                            Using my empirical values for drag and momentum, I can create my A, B, and C arrays. I took the average time
+                            between samples during my max speed run, and used that as my sampling period. I could see an issue with the
+                            Kalman Filter and the time-of-flight sensor because of the high variance of sampling time, but the Kalman filter
+                            should be able to compensate for that if I tune my data vs prediction covariance matrices correctly. I put 
+                            values of 50 to fill sigma_u after tuning the process noise to get good results for the acceleration test case.
+                            I also used a value of 10 for sigma_z, which is the measurement noise covariance matrix. This is because I know 
+                            that the time-of-flight sensor doesn't have that much noise in its measurement. I started with a sigma_3 value
+                            of 50, but found that this was too high, which is how I ended up with a value of 10 for sigma_z.
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab7/Lab7_8.png" alt="Lab7_8" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            I then wrote the Kalman Filter estimation step in python, as well as a loop to test the Kalman filter's ability
+                            to estimate the state of my car.
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab7/Lab7_9.png" alt="Lab7_9" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab7/Lab7_10.png" alt="Lab7_10" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <h2 class="card-title text-center mb-4">Kalman Filtering on the Car</h2>
+                        <p class="card-text">
+                            Instead of reading from my interpolation algorithm from Lab 5, I used the Kalman Filter to estimate the
+                            position of my car. This didn't increase my rate of data like the interpolation did, but it made my data
+                            a little less noisy without introducing phase lag. While I was here, I also made my PID far more robust,
+                            and got the car tuned really well.
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab7/Lab7_11.png" alt="Lab7_11" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            Using the Kalman filter and improved PID, I was able to control from a much farther distance, and I was
+                            able to raise my clamps by a lot. This meant that I approached the wall much much faster, and I'm really
+                            happy with the performance of my system now.
                         </p>
                         <div class="ratio ratio-16x9 mb-4">
-                            <iframe src="https://youtube.com/embed/iejtN3D1_oI" title="YouTube video" allowfullscreen></iframe>
-                        </div>
-                        <h2 class="card-title text-center mb-4">Sampling Times</h2>
-                        <p class="card-text">
-                            Since I'm no longer polling my time-of-flight sensor, my control loop has drastically sped up. Here's a histogram
-                            of the number of milliseconds that each control loop takes:
-                        </p>
-                        <div class="text-center mb-4">
-                            <img src="assets/Lab6/Lab6_3.png" alt="Lab6_3" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
-                        </div>
-                        <p class="card-text">
-                            As you can see, the time between controls is drastically shortened compared to the 15-25 milliseconds 
-                            that a control loop in Lab 5 would take. This is because I optimized my code by removing unneeded low
-                            pass filters. I could do this because the data that a got from the DMP was a lot less noisy than the 
-                            data from the time-of-flight sensors.
-                        </p>
-                        <p class="card-text">
-                            This ensures that my control rate is at least 10x faster than the dynamics of my system.
-                        </p>
-                        <h2 class="card-title text-center mb-4">Development Process</h2>
-                        <p class="card-text">
-                            As previously said, my first goal was to acquire high quality data from the DMP, so I used the example
-                            code provided by the library to play with my car's Euler angles and orientation. Once I found that I 
-                            had low-noise, high accuracy orientation data that didn't drift over time, I integrated the setup()
-                            code into my own bluetooth program, and reported that DMP data to my PC over Bluetooth.
-                        </p>
-                        <div class="text-center mb-4">
-                            <img src="assets/Lab6/Lab6_4.png" alt="Lab6_4" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
-                        </div>
-                        <p class="card-text">
-                            Once I observed this high quality data streaming to my PC, I had the confidence to employ the PID code 
-                            from lab 5. This was mostly just copy and paste, since my control code was fairly functional. I was also
-                            able to remove a lot of complexity because I no longer needed low pass filters for noisy data and clamping 
-                            because I tuned my move() function much better this time around.
-                        </p>
-                        <p class="card-text">
-                            High quality data and good actuators made tuning my PID loop very easy. I used a simply Zeigler Nichols 
-                            approach, increasing Kp until I saw a lot of oscillation. This indicated that I was at the edge of stability.
-                            I then started with 0.6 Kp, 0.5 Ki, and 0.125 Kd, but this worked poorly. I knew that the integral term was
-                            the source of most of my problems because I was in a semistable system, so I reduced my Ki term and increased
-                            my Kp term. I knew I was going in the right direction because my controller quicky got much faster and less
-                            oscillatory.
-                        </p>
-                        <p class="card-text">
-                            Here is a plot of my yaw data over time as I kick the car once. You can see that it deflects almost 90 degrees,
-                            but it is able to recover quickly with limited overshoot. My setpoint in this example is 0 degrees.
-                        </p>
-                        <div class="text-center mb-4">
-                            <img src="assets/Lab6/Lab6_5.png" alt="Lab6_5" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                            <iframe src="https://youtube.com/embed/Bc6QmPARhvk" title="YouTube video" allowfullscreen></iframe>
                         </div>
                     </div>
                 </div>
