@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Fast Robots Spring 2025 - Kelvin Resch</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="assets/robot.ico" />
+        <!-- Bootstrap icons-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="css/styles.css" rel="stylesheet" />
+        <!-- Prism.js CSS for Syntax Highlighting -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    </head>
+    <body>
+        <!-- Prism.js JavaScript -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.js"></script>
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>  -->
+        <!-- Responsive navbar-->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-danger">
+            <div class="container px-lg-5">
+                <a class="navbar-brand" href="https://kelvinresch.github.io">Lab 10</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="https://kelvinresch.github.io">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="https://www.linkedin.com/in/kelvin-resch">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Header-->
+        <header class="py-5">
+            <div class="container px-lg-5">
+                <div class="p-4 p-lg-5 bg-light rounded-3 text-center">
+                    <div class="m-4 m-lg-5">
+                        <h1 class="display-5 fw-bold">Lab 10</h1>
+                        <p class="fs-4">Localization</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Content-->
+        <section class="pt-4">
+            <div class="container px-lg-5">
+                <!-- Single Bootstrap Card -->
+                <div class="card bg-light border-0">
+                    <div class="card-body p-4 p-lg-5">
+                        <!-- Card Content -->
+                        <h1 class="card-title text-center mb-4">Grid Localization</h1>
+                        <h2 class="card-title text-center mb-4">Bayes Filtering</h2>
+                        <p class="card-text">
+                            In the context of grid localization, Bayes Filter is used for estimating
+                            the robot's position on a grid during a simulation. Bayes filter takes in 
+                            control inputs, sensor data, and the robot's prior belief to estimate the
+                            robot's current position. 
+                        </p>
+                        <p class="card-text">
+                            The robot's space is broken into a predefined grid, and in each step, the Bayes Filter 
+                            is used to determine the likelihood of the robot being in each cell using 
+                            the control inputs, sensor data, and prior belief.
+                        </p>
+                        <p class="card-text">
+                            Then, the Bayes Filter predicts where the robot will be next using the
+                            prior position and expected results of the control inputs.
+                        </p>
+                        <p class="card-text">
+                            Finally, the Bayes Filter updates the robot's position using the results from
+                            the sensor readings, reducing the gaussian spread of the robot's estimate of its
+                            own position.
+                        </p>
+                        <h2 class="card-title text-center mb-4">Helper Functions</h2>
+                        <h3 class="card-title text-center mb-4">compute_control</h3>
+                        <p class="card-text">
+                            compute_control() takes in the current and previous positions of the robot in
+                            cartesian coordinates, and returns the difference in position from the reference
+                            frame of the robot's orientation and travel. 
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab10/10_1.png" alt="Lab10_1" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <h3 class="card-title text-center mb-4">odom_motion_model</h3>
+                        <p class="card-text">
+                            odom_motion_model() takes in the current position, previous position, and 
+                            control input to the robot to compute the probability that the robot moved
+                            from prev_pose to cur_pose. This is used to figure out the likelihood that
+                            the robot will be in some position in the future.
+                        </p>
+                        <p class="card-text">
+                            Is does this by using compute_control() to find the robot's motion. Then, 
+                            it relates the actual movements to the expected movements based on the
+                            control input to find how well they line up. The better the values line up,
+                            the higher the probability that the robot is in that location. 
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab10/10_2.png" alt="Lab10_2" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <h3 class="card-title text-center mb-4">prediction_step</h3>
+                        <p class="card-text">
+                            prediction_step is the most compute-expensive part of the the Bayes Filter
+                            because it iterates through every point in the robot's state space and calculates
+                            the odom_motion_model from every point to every other point. It then uses
+                            these probabilities to update the robot's belief model.
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab10/10_3.png" alt="Lab10_3" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <h3 class="card-title text-center mb-4">sensor_model</h3>
+                        <p class="card-text">
+                            sensor_model simulates the sensor readings by just taking the calculated readings
+                            between the robot and the wall along the robot's line of sight and adding a bit of
+                            gaussian noise to the reading. This simulates an imperfect sensor.
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab10/10_4.png" alt="Lab10_4" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <h3 class="card-title text-center mb-4">update_step</h3>
+                        <p class="card-text">
+                            update_step iterates through all the points in the robot's state space, and 
+                            uses the sensor readings from sensor_model to update its belief of how likely
+                            the robot is at any particular position. This method is the feedback step from
+                            the sensors. Without it, the robot's position estimate would just spread out over
+                            time. 
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab10/10_5.png" alt="Lab10_5" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <h2 class="card-title text-center mb-4">Bayes Filtering Demo</h2>
+                        <p class="card-text">
+                            Here's a video of the helper functions I wrote stepping through the room's space. You can see that the cyan line,
+                            the robot's estimate of its location, follows the green line quite well, even though the odometer estimate is running
+                            far away from the robot's ground truth. 
+                        </p>
+                        <div class="ratio ratio-16x9 mb-4">
+                            <iframe src="https://youtube.com/embed/3qpbTMKR9C8" title="YouTube video" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer-->
+        <footer class="py-5 bg-dark">
+            <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Kelvin Resch 2025</p></div>
+        </footer>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="js/scripts.js"></script>
+    </body>
+</html>
