@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Fast Robots Spring 2025 - Kelvin Resch</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="assets/robot.ico" />
+        <!-- Bootstrap icons-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="css/styles.css" rel="stylesheet" />
+        <!-- Prism.js CSS for Syntax Highlighting -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    </head>
+    <body>
+        <!-- Prism.js JavaScript -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.js"></script>
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>  -->
+        <!-- Responsive navbar-->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-danger">
+            <div class="container px-lg-5">
+                <a class="navbar-brand" href="https://kelvinresch.github.io">Lab 11</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="https://kelvinresch.github.io">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="https://www.linkedin.com/in/kelvin-resch">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Header-->
+        <header class="py-5">
+            <div class="container px-lg-5">
+                <div class="p-4 p-lg-5 bg-light rounded-3 text-center">
+                    <div class="m-4 m-lg-5">
+                        <h1 class="display-5 fw-bold">Lab 11</h1>
+                        <p class="fs-4">Localization</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Content-->
+        <section class="pt-4">
+            <div class="container px-lg-5">
+                <!-- Single Bootstrap Card -->
+                <div class="card bg-light border-0">
+                    <div class="card-body p-4 p-lg-5">
+                        <!-- Card Content -->
+                        <h1 class="card-title text-center mb-4">Introduction</h1>
+                        <p class="card-text">
+                            This lab built off the work of Lab 9, where we used the robot to map out a room's walls, 
+                            and Lab 10, where we simulated Bayes filtering to localize a virtual robot in a room.
+                        </p>
+                        <h1 class="card-title text-center mb-4">Testing Localization in Simulation</h1>
+                        <p class="card-text">
+                            To verify that my Lab 11 setup works, I ran the Bayes filtering and localization simulator 
+                            and checked that the results made sense. The robot ran through as expected, with the belief
+                            (blue) following the ground truth (green) and the odometry result (red) drifting off over time.
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab11/11_1.png" alt="Lab11_1" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <h1 class="card-title text-center mb-4">Localization in Real Life</h1>
+                        <p class="card-text">
+                            In the simulation, we had access to a ground truth that could to compare against the robot's localization.
+                            This lab doesn't have access to that ground truth, since we can't manually tell the robot where it is in
+                            the room. Instead, we need to give the robot a ground truth by placing it in known locations around the room,
+                            and running a single localization step at each spot. 
+                        </p>
+                        <p class="card-text">
+                            In this lab, I'll run localization at four locations in the room:
+                        </p>
+                        <p class="card-text">
+                            (-3 ft, -2 ft, 0 deg)
+                        </p>
+                        <p class="card-text">
+                            (0 ft, 3 ft, 0 deg)
+                        </p>
+                        <p class="card-text">
+                            (5 ft, -3 ft, 0 deg)
+                        </p>
+                        <p class="card-text">
+                            (5 ft, 3 ft, 0 deg)
+                        </p>
+                        <p class="card-text">
+                            After running a localization step at each of these locations, the estimated position will be marked
+                            in blue on the "Trajectory Plotter" provided by the course staff. We will then compare the estimated
+                            position to the ground truth position in green.
+                        </p>
+                        <h1 class="card-title text-center mb-4">Implementation</h1>
+                        <p class="card-text">
+                            The only thing that the robot is doing here is rotating and collecting data. The actual localization
+                            is done on my PC, so I need to set up data collection so that I can do the compute in my python
+                            notebooks. 
+                        </p>
+                        <h2 class="card-title text-center mb-4">perform_observation_loop()</h2>
+                        <p class="card-text">
+                            To collect the data, I wrote perform_observation_loop(), which would call COLLECT_DATA on the robot,
+                            which would trigger it to rotate 360 degrees and collect 18 data points (20 degrees apart) from the
+                            ToF sensors, and send that data back to my PC. 
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab11/11_2.png" alt="Lab11_2" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            The method relies on three numpy arrays: times, distances, and angles. These arrays are populated by 
+                            the notification handler which parses the collected data from the robot:
+                        </p>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab11/11_3.png" alt="Lab11_3" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            Together, these three arrays report the data required by a single localization step on the robot.
+                        </p>
+                        <h1 class="card-title text-center mb-4">Localization results</h1>
+                        <p class="card-text">
+                            Here are the results of running a single localization step at each position:
+                        </p>
+                        <h2 class="card-title text-center mb-4">Localization results</h2>
+                        <h3 class="card-title text-center mb-4">Position (-3, -2)</h3>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab11/11_4.png" alt="Lab11_4" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            Overall localization worked exceedingly well, and out of all four points, I think this one was
+                            the easiest to localize. This is because the position (-3, -2) is equidistant from the far, near,
+                            and left walls, so any sensor bias cancels out. This is reflected in the result, as the green belief
+                            dot is centered in the section of the room.
+                        </p>
+                        <h3 class="card-title text-center mb-4">Position (0, 3)</h3>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab11/11_5.png" alt="Lab11_5" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            I think this point was the most succeptible to sensor bias, especially because the ToF sensor has
+                            a tendency to underestimate the distance to the wall when the wall is close. I showed this all the
+                            way back in Lab 3, and this bias is affecting my belief by pushing it closer to the top wall than
+                            it should be. Overall though, localization worked fairly well.
+                        </p>
+                        <h3 class="card-title text-center mb-4">Position (5, -3)</h3>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab11/11_6.png" alt="Lab11_6" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            This position was the best out of the few times that I tried localizing, but it was off the green
+                            dot the other times I tried collecting data. I think this is because the features the robot was detecting
+                            were a little more complex this time, with the hallway above and the open space to the upper left. 
+                            Errors in angle estimation would also affect the localization result significantly, which is why I 
+                            think this position was so variable.
+                        </p>
+                        <h3 class="card-title text-center mb-4">Position (5, 3)</h3>
+                        <div class="text-center mb-4">
+                            <img src="assets/Lab11/11_7.png" alt="Lab11_7" class="img-fluid rounded-3" style="max-width: 100%; height: auto;">
+                        </div>
+                        <p class="card-text">
+                            Similar to the last position, this position also had some variability, although this one wasn't as bad.
+                            I think I did 4 runs of localization at this position, and the robot localized correctly twice. The 
+                            features here aren't as complex as (5, -3), and it's also closer to stuff, which means angle doesn't
+                            matter as much, which is why this result was more consistent.
+                        </p>
+                        <h2 class="card-title text-center mb-4">Conclusion</h2>
+                        <p class="card-text">
+                            I think in my specific case, I used a PD controller to rotate my robot to angle setpoints, but there
+                            was a lot of hysteresis in my robot. Sometimes it would overshoot its position and come back, and 
+                            sometimes it wouldn't. Depending on whether or not the robot overshot or not, it would approach the
+                            setpoint from two different sides, and this would affect whether the robot's final angle for that
+                            sample was an overshoot or undershoot. I could trust that my ToF sensors were accurate, but
+                            my mapping data was still a little noisy. I'm pretty sure this was because of my ability to track
+                            angle setpoints with the PD controller, and if I built a better controller, I think I would be able 
+                            to get more consistent localization results. Overall though, I'm really happy with how well some of my
+                            samples turned out, and I'm looking forward to putting all of this control together in Lab 12.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer-->
+        <footer class="py-5 bg-dark">
+            <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Kelvin Resch 2025</p></div>
+        </footer>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="js/scripts.js"></script>
+    </body>
+</html>
