@@ -93,7 +93,7 @@
                         to reset the internal state of the PID controller.
                     </p>
                     <div class="text-center mb-4">
-                        <img src="assets/Lab12/12_1.png" alt="Lab11_1" class="img-fluid rounded-3"
+                        <img src="assets/Lab12/12_1.png" alt="Lab11_2" class="img-fluid rounded-3"
                             style="max-width: 100%; height: auto;">
                     </div>
                     <p class="card-text">
@@ -107,7 +107,7 @@
                         based on the initalization of the PID class..
                     </p>
                     <div class="text-center mb-4">
-                        <img src="assets/Lab12/12_2.png" alt="Lab11_1" class="img-fluid rounded-3"
+                        <img src="assets/Lab12/12_2.png" alt="Lab12_2" class="img-fluid rounded-3"
                             style="max-width: 100%; height: auto;">
                     </div>
                     <h1 class="card-title text-center mb-4">Challenges</h1>
@@ -123,139 +123,111 @@
                         difficult to read and maintain, especially because there were sections that were repeated.
                         One of the things I did to reduce the spaghetti code was to write a PID class that would
                         handle the PID control for me. This is because PID control is used in two places in this
-                        program, but the execution is the exact same. It just has different parameters.
+                        program, but the execution is the exact same. It just has different parameters, which
+                        makes it a perfect fit for object-oriented programming.
                     </p>
                     <p class="card-text">
-                        (-3 ft, -2 ft, 0 deg)
+                        Writing the PID class was a good first step, but I still had a lot of code that was repeated
+                        due to the state machine. This ended up making my file over 1000 lines long, but it was still
+                        more readable because the code was organized into blocks that were easy to follow. I think
+                        the next step for me is to write a state machine class that would handle the state machine
+                        logic, to offboard the state machine logic from the Artemis to my PC. This would also increase
+                        flexibility, as the robot would not need to be reflashed to change the state machine.
                     </p>
                     <p class="card-text">
-                        (0 ft, 3 ft, 0 deg)
-                    </p>
-                    <p class="card-text">
-                        (5 ft, -3 ft, 0 deg)
-                    </p>
-                    <p class="card-text">
-                        (5 ft, 3 ft, 0 deg)
-                    </p>
-                    <p class="card-text">
-                        After running a localization step at each of these locations, the estimated position will be
-                        marked
-                        in blue on the "Trajectory Plotter" provided by the course staff. We will then compare the
-                        estimated
-                        position to the ground truth position in green.
-                    </p>
-                    <h1 class="card-title text-center mb-4">Implementation</h1>
-                    <p class="card-text">
-                        The only thing that the robot is doing here is rotating and collecting data. The actual
-                        localization
-                        is done on my PC, so I need to set up data collection so that I can do the compute in my python
-                        notebooks.
-                    </p>
-                    <h2 class="card-title text-center mb-4">perform_observation_loop()</h2>
-                    <p class="card-text">
-                        To collect the data, I wrote perform_observation_loop(), which would call COLLECT_DATA on the
-                        robot,
-                        which would trigger it to rotate 360 degrees and collect 18 data points (20 degrees apart) from
+                        One other challenge I faced was compile time. Compilation took multiple minutes for me each
+                        time,
+                        which slowed down my development process. I think this is because of the global libraries
+                        including
+                        ArduinoBLE, ICM20948, and SparkFun_VL53L1X. I tried creating a separate c file that would import
                         the
-                        ToF sensors, and send that data back to my PC.
+                        libraries in a way that would cache the compiled code so that they don't have to get recompiled
+                        each
+                        time, but I couldn't get it to work. The Artemis compiler is apparently known to be heavy, and I
+                        think
+                        in future robotics projects, I will try to use a different microcontroller that has a faster
+                        compiler.
                     </p>
+                    <h1 class="card-title text-center mb-4">System Logic Diagram</h1>
                     <div class="text-center mb-4">
-                        <img src="assets/Lab11/11_2.png" alt="Lab11_2" class="img-fluid rounded-3"
+                        <img src="assets/Lab12/12_3.png" alt="Lab12_3" class="img-fluid rounded-3"
                             style="max-width: 100%; height: auto;">
                     </div>
+                    <h1 class="card-title text-center mb-4">Development</h1>
                     <p class="card-text">
-                        The method relies on three numpy arrays: times, distances, and angles. These arrays are
-                        populated by
-                        the notification handler which parses the collected data from the robot:
+                        Since this lab involved a lot of "putting it all together", I wanted to make sure that the
+                        elements that I was putting together already worked well in isolation. I started with the
+                        angular PID controller, and tested it with setpoints from the original Lab 6, as well as
+                        Lab 9.
                     </p>
-                    <div class="text-center mb-4">
-                        <img src="assets/Lab11/11_3.png" alt="Lab11_3" class="img-fluid rounded-3"
-                            style="max-width: 100%; height: auto;">
+                    <p class="card-text">
+                        Then, I moved on to the linear PID controller, and tested it with setpoints from Lab 5. In
+                        both controllers, I switched to using the PID class that I wrote, and I was able to get
+                        the robot to rotate and move in a straight line even better than before. I think this is
+                        because the PID class is more robust than the code I wrote in previous labs, and it also
+                        has more finely tuned parameters. Increasing the lowpass filter on the derivative term
+                        helped a lot with noise, and I think the integral term is more stable now too because I
+                        added the dt term to the sum.
+                    </p>
+                    <p class="card-text">
+                        The only thing I'd do differently in hindsight is to offload the state machine logic
+                        to my PC. I think this would have made the code a lot cleaner, and it would have also
+                        made it easier to change the state machine without having to reflash the robot. Especially
+                        because the compilation time is so long, I think it would have been worth it to do this.
+                    </p>
+                    <h1 class="card-title text-center mb-4">Execution</h1>
+                    <p class="card-text">
+                        Here's a video of the robot navigating the room with the PID controls and state machine:
+                    </p>
+                    <div class="ratio ratio-16x9 mb-4">
+                        <iframe src="https://youtube.com/embed/--oxCtCvlnE" title="YouTube video"
+                            allowfullscreen></iframe>
                     </div>
+                    <h1 class="card-title text-center mb-4">Results and Discussion</h1>
                     <p class="card-text">
-                        Together, these three arrays report the data required by a single localization step on the
-                        robot.
+                        The core decision I made in this lab was to use a state machine to control the robot's
+                        navigation through the space. The alternative would have been to use the Bayesian filter to
+                        localize the robot, and then give it delta_angle_1, delta_distance, and delta_angle_2
+                        setpoints to allow it to navigate through the space. If my robot had not broken, I think I would
+                        have been able to do this, but I think the state machine is a good alternative considering the
+                        circumstances.
                     </p>
-                    <h1 class="card-title text-center mb-4">Localization results</h1>
                     <p class="card-text">
-                        Here are the results of running a single localization step at each position:
-                    </p>
-                    <h2 class="card-title text-center mb-4">Localization results</h2>
-                    <h3 class="card-title text-center mb-4">Position (-3, -2)</h3>
-                    <div class="text-center mb-4">
-                        <img src="assets/Lab11/11_4.png" alt="Lab11_4" class="img-fluid rounded-3"
-                            style="max-width: 100%; height: auto;">
-                    </div>
-                    <p class="card-text">
-                        Overall localization worked exceedingly well, and out of all four points, I think this one was
-                        the easiest to localize. This is because the position (-3, -2) is equidistant from the far,
-                        near,
-                        and left walls, so any sensor bias cancels out. This is reflected in the result, as the green
-                        belief
-                        dot is centered in the section of the room.
-                    </p>
-                    <h3 class="card-title text-center mb-4">Position (0, 3)</h3>
-                    <div class="text-center mb-4">
-                        <img src="assets/Lab11/11_5.png" alt="Lab11_5" class="img-fluid rounded-3"
-                            style="max-width: 100%; height: auto;">
-                    </div>
-                    <p class="card-text">
-                        I think this point was the most succeptible to sensor bias, especially because the ToF sensor
-                        has
-                        a tendency to underestimate the distance to the wall when the wall is close. I showed this all
-                        the
-                        way back in Lab 3, and this bias is affecting my belief by pushing it closer to the top wall
-                        than
-                        it should be. Overall though, localization worked fairly well.
-                    </p>
-                    <h3 class="card-title text-center mb-4">Position (5, -3)</h3>
-                    <div class="text-center mb-4">
-                        <img src="assets/Lab11/11_6.png" alt="Lab11_6" class="img-fluid rounded-3"
-                            style="max-width: 100%; height: auto;">
-                    </div>
-                    <p class="card-text">
-                        This position was the best out of the few times that I tried localizing, but it was off the
-                        green
-                        dot the other times I tried collecting data. I think this is because the features the robot was
-                        detecting
-                        were a little more complex this time, with the hallway above and the open space to the upper
-                        left.
-                        Errors in angle estimation would also affect the localization result significantly, which is why
-                        I
-                        think this position was so variable.
-                    </p>
-                    <h3 class="card-title text-center mb-4">Position (5, 3)</h3>
-                    <div class="text-center mb-4">
-                        <img src="assets/Lab11/11_7.png" alt="Lab11_7" class="img-fluid rounded-3"
-                            style="max-width: 100%; height: auto;">
-                    </div>
-                    <p class="card-text">
-                        Similar to the last position, this position also had some variability, although this one wasn't
-                        as bad.
-                        I think I did 4 runs of localization at this position, and the robot localized correctly twice.
-                        The
-                        features here aren't as complex as (5, -3), and it's also closer to stuff, which means angle
-                        doesn't
-                        matter as much, which is why this result was more consistent.
-                    </p>
-                    <h2 class="card-title text-center mb-4">Conclusion</h2>
-                    <p class="card-text">
-                        I think in my specific case, I used a PD controller to rotate my robot to angle setpoints, but
-                        there
-                        was a lot of hysteresis in my robot. Sometimes it would overshoot its position and come back,
+                        If I were to implement the Bayesian filter, I would have created three commands: CHANGE_ANGLE,
+                        LINEAR_MOVE, and SAMPLE_DISTANCE. The CHANGE_ANGLE command would take in a set delta_angle, and
+                        move the robot accordingly. It would do this by sampling the DMP yaw angle at the beginning of
+                        command call, adding the setpoint delta to that, and then using the PID controller to
+                        rotate the robot to that angle. The LINEAR_MOVE command would working in a similar fashion, by
+                        measuring the current distance to the wall, and then setting the setpoint to that distance plus
+                        the delta_distance. Finally, SAMPLE_DISTANCE would just take a few samples of the ToF sensors,
                         and
-                        sometimes it wouldn't. Depending on whether or not the robot overshot or not, it would approach
-                        the
-                        setpoint from two different sides, and this would affect whether the robot's final angle for
-                        that
-                        sample was an overshoot or undershoot. I could trust that my ToF sensors were accurate, but
-                        my mapping data was still a little noisy. I'm pretty sure this was because of my ability to
-                        track
-                        angle setpoints with the PD controller, and if I built a better controller, I think I would be
-                        able
-                        to get more consistent localization results. Overall though, I'm really happy with how well some
-                        of my
-                        samples turned out, and I'm looking forward to putting all of this control together in Lab 12.
+                        return that single value to the PC.
+                    </p>
+                    <p class="card-text">
+                        The alternative to this architecture would be to have a
+                        MOVE command that takes care of delta_angle_1,
+                        delta_distance, and delta_angle_2 all at once, and a
+                        GET_OBSERVATION command that works similar to
+                        Lab 9's mapping command, and return that data for the
+                        localization. This would be a marginally easier
+                        to implement on the PC side, but it would make the Artemis
+                        code more complicated and more spaghetti-like
+                        because of the multiple control states. Especially since flashing
+                        the Artemis takes a long time, I would want to make the embedded-side
+                        code as simple as possible. Also, writing a simple method to replace
+                        loc.get_observation_data() and traj.execute_time_step() would not be
+                        too difficult.
+                    </p>
+                    <h1 class="card-title text-center mb-4">Conclusion</h1>
+                    <p class="card-text">
+                        Overall, I'm quite happy with how this lab turned out. I think it a fair job
+                        integrating all of the different parts of earlier labs in this class, and I
+                        learned a lot about the importance of modularity and code organization, especially
+                        in integration projects like this. I think the biggest takeaway for me is that
+                        I need to work better around system weaknesses, such as the long compilation time.
+                        Putting the state machine on the microcontroller was not a wise idea, and I had
+                        enough information when starting this lab to know that I should have put it on the PC.
+                        Regardless, I think the robot turned out well, and I'm happy with how it performed.
                     </p>
                 </div>
             </div>
