@@ -59,31 +59,71 @@
                     <!-- Card Content -->
                     <h1 class="card-title text-center mb-4">Introduction</h1>
                     <p class="card-text">
-                        This lab built off the work of Lab 9, where we used the robot to map out a room's walls,
-                        and Lab 10, where we simulated Bayes filtering to localize a virtual robot in a room.
+                        The purpose of this class was to built a robotic,
+                        autonomous car that could navigate its
+                        surroundings. This required us to contend with
+                        various sensors, non-linearities, feedback
+                        control, and embedded programming. The goal of
+                        this lab was to implement navigation through
+                        a room with our car. We started with building the
+                        robot's hardware: sensors, motors, and wiring.
+                        Then, we implemented the software: PID loops to
+                        control orientation and linear position, a Kalman
+                        Filter to merge sensor data, and Bayes filtering
+                        to localize the robot in a room. Finally, it's
+                        time to put all of this together and let the robot
+                        navigate itself through the room.
                     </p>
-                    <h1 class="card-title text-center mb-4">Testing Localization in Simulation</h1>
+                    <h1 class="card-title text-center mb-4">Key Parts</h1>
                     <p class="card-text">
-                        To verify that my Lab 11 setup works, I ran the Bayes filtering and localization simulator
-                        and checked that the results made sense. The robot ran through as expected, with the belief
-                        (blue) following the ground truth (green) and the odometry result (red) drifting off over time.
+                        The system in composed of three main parts:
+                    </p>
+                    <p class="card-text">
+                        State machine to step through the different phases of
+                        the robot's movement, angular PID control to
+                        rotate the robot to a setpoint, and linear PID control
+                        to move the robot precise distances.
+                    </p>
+                    <p class="card-text">
+                        For the PID control, I wrote a small library to reduce
+                        the spaghetti code that I wrote in previous labs.
+                        This consisted of a PID class that would be initialized
+                        with control parameters, and a method to
+                        compute the control signal. The class also has a method
+                        to reset the internal state of the PID controller.
                     </p>
                     <div class="text-center mb-4">
-                        <img src="assets/Lab11/11_1.png" alt="Lab11_1" class="img-fluid rounded-3"
+                        <img src="assets/Lab12/12_1.png" alt="Lab11_1" class="img-fluid rounded-3"
                             style="max-width: 100%; height: auto;">
                     </div>
-                    <h1 class="card-title text-center mb-4">Localization in Real Life</h1>
                     <p class="card-text">
-                        In the simulation, we had access to a ground truth that could to compare against the robot's
-                        localization.
-                        This lab doesn't have access to that ground truth, since we can't manually tell the robot where
-                        it is in
-                        the room. Instead, we need to give the robot a ground truth by placing it in known locations
-                        around the room,
-                        and running a single localization step at each spot.
+                        Here's the core method of the PID class. It takes the
+                        setpoint, sensor, and time as inputs, and returns
+                        the control signal. I included clamping on the integral
+                        term to prevent windup, and I also included
+                        a lowpass filter on the derivative term to reduce noise.
+                        The low pass filter is implemented as a simple
+                        first order filter, and the cutoff frequency is adjustable
+                        based on the initalization of the PID class..
+                    </p>
+                    <div class="text-center mb-4">
+                        <img src="assets/Lab12/12_2.png" alt="Lab11_1" class="img-fluid rounded-3"
+                            style="max-width: 100%; height: auto;">
+                    </div>
+                    <h1 class="card-title text-center mb-4">Challenges</h1>
+                    <p class="card-text">
+                        The biggest challenge I faced in this lab was hardware and spaghettification.
+                        I spent some time in the beginning of the semester to build a high quality robot, and
+                        everything held up very well up until this lab. For some reason, but motor controllers
+                        became unresponsive, and I had to use Rachel Arena's car to complete the lab.
                     </p>
                     <p class="card-text">
-                        In this lab, I'll run localization at four locations in the room:
+                        The other challenge I faced in this lab was spaghetti code. Up until this point, everything
+                        I wrote was in one big file, and much of my code approached 1500 lines. This made the code
+                        difficult to read and maintain, especially because there were sections that were repeated.
+                        One of the things I did to reduce the spaghetti code was to write a PID class that would
+                        handle the PID control for me. This is because PID control is used in two places in this
+                        program, but the execution is the exact same. It just has different parameters.
                     </p>
                     <p class="card-text">
                         (-3 ft, -2 ft, 0 deg)
